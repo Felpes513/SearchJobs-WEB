@@ -1,0 +1,29 @@
+<section class="my-resumes-page">
+  <div class="page-header">
+    <h2>Meus currículos</h2>
+    <p>Visualize todos os currículos enviados para a plataforma.</p>
+  </div>
+
+  <div *ngIf="carregando" class="state-box">
+    Carregando currículos...
+  </div>
+
+  <div *ngIf="mensagemErro" class="state-box error">
+    {{ mensagemErro }}
+  </div>
+
+  <div *ngIf="!carregando && !mensagemErro && curriculos.length === 0" class="state-box empty">
+    Você ainda não enviou nenhum currículo.
+  </div>
+
+  <div *ngIf="!carregando && !mensagemErro && curriculos.length > 0" class="resume-list">
+    <div class="resume-card" *ngFor="let curriculo of curriculos">
+      <div class="resume-info">
+        <h3>{{ curriculo.fileName }}</h3>
+        <p><strong>ID:</strong> {{ curriculo.id }}</p>
+        <p><strong>Caminho:</strong> {{ curriculo.filePath }}</p>
+        <p><strong>Enviado em:</strong> {{ formatarData(curriculo.createdAt) }}</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,60 @@
+<section class="upload-page">
+  <div class="page-header">
+    <h2>Upload de currículo</h2>
+    <p>Envie seu currículo em PDF para processamento e extração automática de dados.</p>
+  </div>
+
+  <div class="upload-card">
+    <div class="upload-area">
+      <div class="upload-icon">⇪</div>
+
+      <h3>Selecionar arquivo</h3>
+      <p>Formato aceito: PDF.</p>
+
+      <label class="file-label" for="resumeFile"> Escolher arquivo </label>
+
+      <input
+        id="resumeFile"
+        type="file"
+        accept=".pdf,application/pdf"
+        (change)="onFileSelected($event)"
+      />
+
+      <div *ngIf="fileName" class="file-name">
+        Arquivo selecionado: <strong>{{ fileName }}</strong>
+      </div>
+    </div>
+
+    <div *ngIf="mensagemErro" class="message error">
+      {{ mensagemErro }}
+    </div>
+
+    <div *ngIf="mensagemSucesso" class="message success">
+      {{ mensagemSucesso }}
+    </div>
+
+    <div *ngIf="extraindo" class="message extracting">Extraindo dados do currículo com IA...</div>
+
+    <div class="actions">
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="carregando || extraindo || !selectedFile"
+        (click)="enviarCurriculo()"
+      >
+        {{ carregando ? 'Enviando...' : extraindo ? 'Extraindo...' : 'Enviar currículo' }}
+      </button>
+    </div>
+  </div>
+
+  <p>modalAberto: {{ modalAberto }}</p>
+  <p>tem dados: {{ !!dadosExtraidos }}</p>
+
+  <app-extract-preview-modal
+    *ngIf="modalAberto"
+    [isOpen]="modalAberto"
+    [data]="dadosExtraidos"
+    [mensagem]="mensagemExtracao"
+    (close)="fecharModal()"
+  ></app-extract-preview-modal>
+</section>

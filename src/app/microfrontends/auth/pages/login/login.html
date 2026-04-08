@@ -1,0 +1,50 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Entrar</h1>
+      <p>Acesse sua conta para continuar no SearchJobs.</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Digite seu e-mail"
+        />
+        <small *ngIf="campoInvalido('email')">
+          Informe um e-mail válido.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          formControlName="senha"
+          placeholder="Digite sua senha"
+        />
+        <small *ngIf="campoInvalido('senha')">
+          A senha é obrigatória.
+        </small>
+      </div>
+
+      <div *ngIf="mensagemErro" class="message error">
+        {{ mensagemErro }}
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="carregando">
+          {{ carregando ? 'Entrando...' : 'Entrar' }}
+        </button>
+
+        <button type="button" class="btn-secondary" routerLink="/register">
+          Criar conta
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

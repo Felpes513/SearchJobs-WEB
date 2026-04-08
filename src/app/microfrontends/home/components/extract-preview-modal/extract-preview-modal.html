@@ -1,0 +1,76 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Dados extraídos do currículo</h2>
+        <p>{{ mensagem || 'Visualize as informações identificadas pela IA.' }}</p>
+      </div>
+
+      <button type="button" class="close-button" (click)="onClose()">
+        ✕
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="data">
+      <section class="info-block">
+        <h3>Dados principais</h3>
+        <p><strong>Nome:</strong> {{ data.nome || 'Não informado' }}</p>
+        <p><strong>Email:</strong> {{ data.email || 'Não informado' }}</p>
+        <p><strong>Telefone:</strong> {{ data.telefone || 'Não informado' }}</p>
+      </section>
+
+      <section class="info-block">
+        <h3>Skills</h3>
+        <div class="tags" *ngIf="data.skills?.length; else semSkills">
+          <span class="tag" *ngFor="let skill of data.skills">{{ skill }}</span>
+        </div>
+        <ng-template #semSkills>
+          <p>Nenhuma skill identificada.</p>
+        </ng-template>
+      </section>
+
+      <section class="info-block">
+        <h3>Experiências</h3>
+        <div *ngIf="data.experiencias?.length; else semExperiencias" class="list-block">
+          <div class="list-item" *ngFor="let exp of data.experiencias">
+            <strong>{{ exp.cargo || 'Cargo não informado' }}</strong>
+            <p>{{ exp.empresa || 'Empresa não informada' }}</p>
+            <span>{{ exp.periodo || 'Período não informado' }}</span>
+          </div>
+        </div>
+        <ng-template #semExperiencias>
+          <p>Nenhuma experiência identificada.</p>
+        </ng-template>
+      </section>
+
+      <section class="info-block">
+        <h3>Certificações</h3>
+        <ul *ngIf="data.certificacoes?.length; else semCertificacoes">
+          <li *ngFor="let cert of data.certificacoes">{{ cert }}</li>
+        </ul>
+        <ng-template #semCertificacoes>
+          <p>Nenhuma certificação identificada.</p>
+        </ng-template>
+      </section>
+
+      <section class="info-block">
+        <h3>Projetos</h3>
+        <div *ngIf="data.projetos?.length; else semProjetos" class="list-block">
+          <div class="list-item" *ngFor="let projeto of data.projetos">
+            <strong>{{ projeto.nome || 'Projeto sem nome' }}</strong>
+            <p>{{ projeto.descricao || 'Sem descrição' }}</p>
+          </div>
+        </div>
+        <ng-template #semProjetos>
+          <p>Nenhum projeto identificado.</p>
+        </ng-template>
+      </section>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="primary-button" (click)="onClose()">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>

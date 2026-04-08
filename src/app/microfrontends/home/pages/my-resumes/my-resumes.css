@@ -1,0 +1,60 @@
+.my-resumes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  color: #111827;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.state-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  color: #475569;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+}
+
+.state-box.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.state-box.empty {
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.resume-list {
+  display: grid;
+  gap: 16px;
+}
+
+.resume-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.resume-info h3 {
+  margin: 0 0 12px;
+  color: #111827;
+}
+
+.resume-info p {
+  margin: 6px 0;
+  color: #475569;
+}
