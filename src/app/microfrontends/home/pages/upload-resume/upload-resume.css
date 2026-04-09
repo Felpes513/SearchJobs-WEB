@@ -1,12 +1,14 @@
 .upload-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--section-gap);
+  width: min(100%, 980px);
+  margin: 0 auto;
 }
 
 .page-header h2 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 4vw, 2rem);
   color: #111827;
 }
 
@@ -20,17 +22,18 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 20px;
-  padding: 32px;
+  padding: clamp(20px, 4vw, 32px);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  max-width: 760px;
+  width: 100%;
 }
 
 .upload-area {
   border: 2px dashed #cbd5e1;
   border-radius: 18px;
-  padding: 40px 24px;
+  padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 24px);
   text-align: center;
   background: #f8fafc;
+  overflow-wrap: anywhere;
 }
 
 .upload-icon {
@@ -123,4 +126,15 @@ input[type='file'] {
   background: #eff6ff;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
+}
+
+@media (max-width: 600px) {
+  .actions {
+    justify-content: stretch;
+  }
+
+  .btn-primary {
+    width: 100%;
+    min-width: 0;
+  }
 }

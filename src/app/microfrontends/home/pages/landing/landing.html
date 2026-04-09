@@ -1,5 +1,17 @@
-<div class="layout">
-  <app-sidebar></app-sidebar>
+<div class="layout" [class.menu-open]="menuOpen">
+  <button
+    mat-fab
+    type="button"
+    class="mobile-menu-button"
+    aria-label="Abrir menu"
+    (click)="toggleMenu()"
+  >
+    <mat-icon>{{ menuOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+
+  <div class="mobile-backdrop" (click)="closeMenu()"></div>
+
+  <app-sidebar [isOpen]="menuOpen" (navigate)="closeMenu()"></app-sidebar>
 
   <main class="content">
     <router-outlet></router-outlet>

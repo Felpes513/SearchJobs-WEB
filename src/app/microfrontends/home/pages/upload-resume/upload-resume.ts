@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { ResumeService } from '../../services/home.service';
 import { ParsedResumeData } from '../../models/home.models';
 import { ExtractPreviewModal } from '../../components/extract-preview-modal/extract-preview-modal';
 
 @Component({
   selector: 'app-upload-resume',
-  imports: [CommonModule, RouterLink, ExtractPreviewModal],
+  imports: [CommonModule, ExtractPreviewModal, MatButtonModule],
   templateUrl: './upload-resume.html',
   styleUrl: './upload-resume.css',
 })

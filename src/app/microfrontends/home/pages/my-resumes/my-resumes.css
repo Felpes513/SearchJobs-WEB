@@ -1,12 +1,14 @@
 .my-resumes-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--section-gap);
+  width: min(100%, 1080px);
+  margin: 0 auto;
 }
 
 .page-header h2 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 4vw, 2rem);
   color: #111827;
 }
 
@@ -39,6 +41,7 @@
 .resume-list {
   display: grid;
   gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .resume-card {
@@ -57,4 +60,12 @@
 .resume-info p {
   margin: 6px 0;
   color: #475569;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .resume-card,
+  .state-box {
+    padding: 16px;
+  }
 }

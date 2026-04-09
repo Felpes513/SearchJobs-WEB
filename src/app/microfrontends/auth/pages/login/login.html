@@ -37,11 +37,11 @@
       </div>
 
       <div class="actions">
-        <button type="submit" class="btn-primary" [disabled]="carregando">
+        <button mat-raised-button color="primary" type="submit" class="btn-primary" [disabled]="carregando">
           {{ carregando ? 'Entrando...' : 'Entrar' }}
         </button>
 
-        <button type="button" class="btn-secondary" routerLink="/register">
+        <button mat-stroked-button type="button" class="btn-secondary" routerLink="/register">
           Criar conta
         </button>
       </div>

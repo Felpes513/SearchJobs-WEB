@@ -2,21 +2,21 @@
   <div class="modal">
     <div class="modal-header">
       <div>
-        <h2>Dados extraídos do currículo</h2>
-        <p>{{ mensagem || 'Visualize as informações identificadas pela IA.' }}</p>
+        <h2>Dados extraÃ­dos do currÃ­culo</h2>
+        <p>{{ mensagem || 'Visualize as informaÃ§Ãµes identificadas pela IA.' }}</p>
       </div>
 
-      <button type="button" class="close-button" (click)="onClose()">
-        ✕
+      <button mat-icon-button type="button" class="close-button" (click)="onClose()" aria-label="Fechar modal">
+        <mat-icon>close</mat-icon>
       </button>
     </div>
 
     <div class="modal-body" *ngIf="data">
       <section class="info-block">
         <h3>Dados principais</h3>
-        <p><strong>Nome:</strong> {{ data.nome || 'Não informado' }}</p>
-        <p><strong>Email:</strong> {{ data.email || 'Não informado' }}</p>
-        <p><strong>Telefone:</strong> {{ data.telefone || 'Não informado' }}</p>
+        <p><strong>Nome:</strong> {{ data.nome || 'NÃ£o informado' }}</p>
+        <p><strong>Email:</strong> {{ data.email || 'NÃ£o informado' }}</p>
+        <p><strong>Telefone:</strong> {{ data.telefone || 'NÃ£o informado' }}</p>
       </section>
 
       <section class="info-block">
@@ -30,26 +30,26 @@
       </section>
 
       <section class="info-block">
-        <h3>Experiências</h3>
+        <h3>ExperiÃªncias</h3>
         <div *ngIf="data.experiencias?.length; else semExperiencias" class="list-block">
           <div class="list-item" *ngFor="let exp of data.experiencias">
-            <strong>{{ exp.cargo || 'Cargo não informado' }}</strong>
-            <p>{{ exp.empresa || 'Empresa não informada' }}</p>
-            <span>{{ exp.periodo || 'Período não informado' }}</span>
+            <strong>{{ exp.cargo || 'Cargo nÃ£o informado' }}</strong>
+            <p>{{ exp.empresa || 'Empresa nÃ£o informada' }}</p>
+            <span>{{ exp.periodo || 'PerÃ­odo nÃ£o informado' }}</span>
           </div>
         </div>
         <ng-template #semExperiencias>
-          <p>Nenhuma experiência identificada.</p>
+          <p>Nenhuma experiÃªncia identificada.</p>
         </ng-template>
       </section>
 
       <section class="info-block">
-        <h3>Certificações</h3>
+        <h3>CertificaÃ§Ãµes</h3>
         <ul *ngIf="data.certificacoes?.length; else semCertificacoes">
           <li *ngFor="let cert of data.certificacoes">{{ cert }}</li>
         </ul>
         <ng-template #semCertificacoes>
-          <p>Nenhuma certificação identificada.</p>
+          <p>Nenhuma certificaÃ§Ã£o identificada.</p>
         </ng-template>
       </section>
 
@@ -58,7 +58,7 @@
         <div *ngIf="data.projetos?.length; else semProjetos" class="list-block">
           <div class="list-item" *ngFor="let projeto of data.projetos">
             <strong>{{ projeto.nome || 'Projeto sem nome' }}</strong>
-            <p>{{ projeto.descricao || 'Sem descrição' }}</p>
+            <p>{{ projeto.descricao || 'Sem descriÃ§Ã£o' }}</p>
           </div>
         </div>
         <ng-template #semProjetos>
@@ -68,7 +68,7 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="primary-button" (click)="onClose()">
+      <button mat-raised-button color="primary" type="button" class="primary-button" (click)="onClose()">
         Fechar
       </button>
     </div>

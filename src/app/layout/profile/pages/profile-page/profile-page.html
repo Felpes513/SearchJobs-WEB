@@ -1,0 +1,232 @@
+<section class="profile-page">
+  <div class="header">
+    <button class="back-button" type="button" (click)="goBack()" mat-stroked-button>
+      <mat-icon>arrow_back</mat-icon>
+      <span>Voltar</span>
+    </button>
+
+    <h1>Meu Perfil</h1>
+    <p>Atualize suas informações profissionais, skills, experiências, certificações e projetos.</p>
+  </div>
+
+  <p *ngIf="loading">Carregando perfil...</p>
+
+  <form *ngIf="!loading" [formGroup]="profileForm" class="profile-form">
+    <div class="card">
+      <h2>Informações principais</h2>
+
+      <label>
+        Resumo profissional
+        <textarea formControlName="resumoProfissional" rows="5"></textarea>
+      </label>
+
+      <div class="grid-2">
+        <label>
+          Cidade
+          <input type="text" formControlName="cidade" />
+        </label>
+
+        <label>
+          Estado
+          <input type="text" formControlName="estado" />
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label>
+          LinkedIn
+          <input type="text" formControlName="linkedinUrl" />
+        </label>
+
+        <label>
+          GitHub
+          <input type="text" formControlName="githubUrl" />
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Skills</h2>
+
+        <button mat-raised-button color="primary" type="button" (click)="addSkill()">
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+
+      <div formArrayName="skills">
+        <div class="item-row" *ngFor="let skill of skills.controls; let i = index">
+          <input type="text" [formControlName]="i" placeholder="Ex: Java" />
+
+          <button mat-stroked-button color="warn" type="button" (click)="removeSkill(i)">
+            <mat-icon>delete</mat-icon>
+            Remover
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Experiências</h2>
+
+        <button mat-raised-button color="primary" type="button" (click)="addExperience()">
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+
+      <div formArrayName="experiences">
+        <div
+          class="group-box"
+          *ngFor="let experience of experiences.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <div class="grid-2">
+            <label>
+              Cargo
+              <input type="text" formControlName="cargo" />
+            </label>
+
+            <label>
+              Empresa
+              <input type="text" formControlName="empresa" />
+            </label>
+          </div>
+
+          <label>
+            Descrição
+            <textarea rows="4" formControlName="descricao"></textarea>
+          </label>
+
+          <div class="grid-2">
+            <label>
+              Data início
+              <input type="month" formControlName="dataInicio" />
+            </label>
+
+            <label>
+              Data fim
+              <input type="month" formControlName="dataFim" />
+            </label>
+          </div>
+
+          <button mat-stroked-button color="warn" type="button" (click)="removeExperience(i)">
+            <mat-icon>delete</mat-icon>
+            Remover
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Certificações</h2>
+
+        <button mat-raised-button color="primary" type="button" (click)="addCertification()">
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+
+      <div formArrayName="certifications">
+        <div
+          class="group-box"
+          *ngFor="let certification of certifications.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <div class="grid-2">
+            <label>
+              Nome da certificação
+              <input type="text" formControlName="nomeCertificacao" />
+            </label>
+
+            <label>
+              Instituição
+              <input type="text" formControlName="instituicao" />
+            </label>
+          </div>
+
+          <label>
+            Data de obtenção
+            <input type="month" formControlName="dataObtencao" />
+          </label>
+
+          <button mat-stroked-button color="warn" type="button" (click)="removeCertification(i)">
+            <mat-icon>delete</mat-icon>
+            Remover
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Projetos</h2>
+
+        <button mat-raised-button color="primary" type="button" (click)="addProject()">
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+
+      <div formArrayName="projects">
+        <div
+          class="group-box"
+          *ngFor="let project of projects.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <label>
+            Nome
+            <input type="text" formControlName="nome" />
+          </label>
+
+          <label>
+            Descrição
+            <textarea rows="4" formControlName="descricao"></textarea>
+          </label>
+
+          <div class="grid-2">
+            <label>
+              Stack
+              <input type="text" formControlName="stack" />
+            </label>
+
+            <label>
+              Link
+              <input type="text" formControlName="link" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+
+    <div class="actions">
+      <button
+        *ngIf="projects.controls.length > 0"
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="removeProject(projects.controls.length - 1)"
+      >
+        <mat-icon>delete</mat-icon>
+        Remover projeto
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="saveAll()"
+        [disabled]="saving"
+      >
+        <mat-icon>save</mat-icon>
+        {{ saving ? 'Salvando...' : 'Salvar perfil' }}
+      </button>
+    </div>
+  </form>
+</section>

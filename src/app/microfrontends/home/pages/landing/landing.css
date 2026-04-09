@@ -4,8 +4,67 @@
   background: #f8fafc;
 }
 
+.mobile-menu-button {
+  display: none;
+}
+
+.mobile-backdrop {
+  display: none;
+}
+
 .content {
   flex: 1;
-  padding: 24px;
-  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--content-gutter);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    display: block;
+  }
+
+  .mobile-menu-button {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1200;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 14px;
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.22);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1050;
+    display: block;
+  }
+
+  .layout.menu-open .mobile-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .content {
+    width: 100%;
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding: 76px 16px 20px;
+  }
 }

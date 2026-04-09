@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: clamp(16px, 4vw, 32px);
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
@@ -12,7 +12,7 @@
   max-width: 460px;
   background: #ffffff;
   border-radius: 20px;
-  padding: 32px;
+  padding: clamp(20px, 4vw, 32px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
 }
 
@@ -128,4 +128,19 @@
 
 .btn-secondary:hover {
   background: #d1d5db;
+}
+
+@media (max-width: 600px) {
+  .register-page {
+    align-items: stretch;
+  }
+
+  .register-card {
+    border-radius: 18px;
+    margin: auto 0;
+  }
+
+  .register-header h1 {
+    font-size: 1.75rem;
+  }
 }

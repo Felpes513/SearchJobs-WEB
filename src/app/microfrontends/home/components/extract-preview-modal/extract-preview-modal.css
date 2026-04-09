@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: clamp(12px, 3vw, 24px);
   z-index: 1000;
 }
 
@@ -123,4 +123,35 @@
   color: #ffffff;
   font-weight: 600;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .modal {
+    max-height: 100%;
+    border-radius: 18px;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .modal-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .close-button {
+    align-self: flex-end;
+  }
+
+  .modal-footer {
+    justify-content: stretch;
+  }
+
+  .primary-button {
+    width: 100%;
+  }
 }

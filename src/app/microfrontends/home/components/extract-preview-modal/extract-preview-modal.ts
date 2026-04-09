@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ParsedResumeData } from '../../models/home.models';
 
 @Component({
   selector: 'app-extract-preview-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './extract-preview-modal.html',
   styleUrl: './extract-preview-modal.css',
 })

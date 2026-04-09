@@ -1,44 +1,59 @@
 <aside class="sidebar">
+  <div class="sidebar-mobile-header">
+    <span class="sidebar-brand">SearchJobs</span>
+
+    <button mat-icon-button type="button" class="mobile-close-button" aria-label="Fechar menu" (click)="onNavigate()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
   <div class="sidebar-top">
-    <div class="brand">
-      <div class="brand-logo">SJ</div>
-      <div class="brand-text">
-        <h1>SearchJobs</h1>
-        <span>Meu painel</span>
+    <a routerLink="/perfil" routerLinkActive="active" class="profile-card" (click)="onNavigate()">
+      <div class="profile-avatar">
+        <mat-icon>person</mat-icon>
       </div>
-    </div>
+
+      <div class="profile-text">
+        <h1>Meu perfil</h1>
+        <span>Editar informaÃ§Ãµes</span>
+      </div>
+    </a>
 
     <nav class="menu">
-      <a routerLink="/landing/home" routerLinkActive="active" class="menu-item">
-        <span class="icon">⌂</span>
+      <a
+        routerLink="/landing/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="menu-item"
+        (click)="onNavigate()"
+      >
+        <mat-icon>home</mat-icon>
         <span>Tela inicial</span>
       </a>
 
-      <a routerLink="/landing/upload" routerLinkActive="active" class="menu-item">
-        <span class="icon">⇪</span>
-        <span>Upload currículo</span>
+      <a routerLink="/landing/upload" routerLinkActive="active" class="menu-item" (click)="onNavigate()">
+        <mat-icon>upload_file</mat-icon>
+        <span>Upload currÃ­culo</span>
       </a>
 
-      <a routerLink="/landing/resumes" routerLinkActive="active" class="menu-item">
-        <span class="icon">☰</span>
-        <span>Meus currículos</span>
+      <a routerLink="/landing/resumes" routerLinkActive="active" class="menu-item" (click)="onNavigate()">
+        <mat-icon>description</mat-icon>
+        <span>Meus currÃ­culos</span>
       </a>
 
-      <a routerLink="/landing/jobs" routerLinkActive="active" class="menu-item">
-        <span class="icon">⌕</span>
+      <a routerLink="/landing/jobs" routerLinkActive="active" class="menu-item" (click)="onNavigate()">
+        <mat-icon>work_outline</mat-icon>
         <span>Vagas</span>
       </a>
 
-      <a routerLink="/landing/history" routerLinkActive="active" class="menu-item">
-        <span class="icon">⟳</span>
-        <span>Histórico</span>
+      <a routerLink="/landing/history" routerLinkActive="active" class="menu-item" (click)="onNavigate()">
+        <mat-icon>history</mat-icon>
+        <span>HistÃ³rico</span>
       </a>
     </nav>
   </div>
 
   <div class="sidebar-bottom">
-    <button class="logout-button" type="button">
-      Sair
-    </button>
+    <button mat-flat-button color="warn" class="logout-button" type="button" (click)="onNavigate()">Sair</button>
   </div>
 </aside>

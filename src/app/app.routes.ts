@@ -16,4 +16,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./microfrontends/home/routes/home.routes').then((m) => m.HOME_ROUTES),
   },
+
+  {
+    path: 'perfil',
+    loadComponent: () =>
+      import('./layout/profile/pages/profile-page/profile-page').then(
+        (m) => m.ProfilePageComponent,
+      ),
+  },
 ];
