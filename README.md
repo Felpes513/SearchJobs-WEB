@@ -2,6 +2,28 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.4.
 
+## Docker
+
+Build da imagem:
+
+```bash
+docker build -t searchjobs-frontend .
+```
+
+Rodando o container:
+
+```bash
+docker run --rm -p 4200:80 searchjobs-frontend
+```
+
+Ou com Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+A aplicação ficará disponível em `http://localhost:4200`.
+
 ## Development server
 
 To start a local development server, run:

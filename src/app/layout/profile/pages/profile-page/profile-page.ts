@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, DOCUMENT, Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -13,19 +13,29 @@ import {
 } from '../../models/profile.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { ConfirmationModal } from '../../../../shared/components/confirmation-modal/confirmation-modal';
+import { AppSettingsValue, AppThemePreference, SettingsModal } from '../../../../shared/components/settings-modal/settings-modal';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIcon, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIcon, MatButtonModule, ConfirmationModal, SettingsModal],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css',
 })
 export class ProfilePageComponent implements OnInit {
+  private readonly settingsStorageKey = 'appSettings';
+
   loading = false;
   saving = false;
+  syncingGithubProjects = false;
   errorMessage = '';
   successMessage = '';
+  githubSyncModalOpen = false;
+  settingsModalOpen = false;
+  appLanguage = 'pt-BR';
+  appTheme: AppThemePreference = 'system';
+  termsAccepted = false;
 
   profileForm!: FormGroup;
 
@@ -38,6 +48,7 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.loadStoredSettings();
     this.loadData();
   }
 
@@ -202,6 +213,72 @@ export class ProfilePageComponent implements OnInit {
     this.projects.removeAt(index);
   }
 
+  openGithubSyncModal(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.githubSyncModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeGithubSyncModal(): void {
+    if (this.syncingGithubProjects) {
+      return;
+    }
+
+    this.githubSyncModalOpen = false;
+    this.cdr.detectChanges();
+  }
+
+  syncGithubProjects(): void {
+    if (this.syncingGithubProjects) {
+      return;
+    }
+
+    this.syncingGithubProjects = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.profileService.syncGithubProjects().subscribe({
+      next: (projects) => {
+        this.setProjects(Array.isArray(projects) ? projects : []);
+        this.syncingGithubProjects = false;
+        this.githubSyncModalOpen = false;
+        this.successMessage = 'Projetos sincronizados com o GitHub com sucesso.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.syncingGithubProjects = false;
+        this.errorMessage =
+          error?.error?.message ||
+          error?.error?.mensagem ||
+          'Não foi possível sincronizar os projetos do GitHub.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  openSettingsModal(): void {
+    this.settingsModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeSettingsModal(): void {
+    this.settingsModalOpen = false;
+    this.cdr.detectChanges();
+  }
+
+  saveSettings(settings: AppSettingsValue): void {
+    this.appLanguage = settings.language;
+    this.appTheme = settings.theme;
+    this.termsAccepted = settings.termsAccepted;
+
+    localStorage.setItem(this.settingsStorageKey, JSON.stringify(settings));
+    this.applyTheme(settings.theme);
+    this.settingsModalOpen = false;
+    this.successMessage = 'Configurações do sistema salvas com sucesso.';
+    this.cdr.detectChanges();
+  }
+
   goBack(): void {
     this.location.back();
   }
@@ -289,5 +366,39 @@ export class ProfilePageComponent implements OnInit {
     const monthPattern = /^\d{4}-\d{2}$/;
     if (monthPattern.test(value)) return value;
     return '';
+  }
+
+  private loadStoredSettings(): void {
+    const raw = localStorage.getItem(this.settingsStorageKey);
+
+    if (!raw) {
+      this.applyTheme(this.appTheme);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as AppSettingsValue;
+      this.appLanguage = parsed.language || 'pt-BR';
+      this.appTheme = parsed.theme || 'system';
+      this.termsAccepted = !!parsed.termsAccepted;
+    } catch {
+      this.appLanguage = 'pt-BR';
+      this.appTheme = 'system';
+      this.termsAccepted = false;
+    }
+
+    this.applyTheme(this.appTheme);
+  }
+
+  private applyTheme(theme: AppThemePreference): void {
+    const root = document.documentElement;
+
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-app-theme', prefersDark ? 'dark' : 'light');
+      return;
+    }
+
+    root.setAttribute('data-app-theme', theme);
   }
 }

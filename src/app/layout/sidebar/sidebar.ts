@@ -16,8 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 export class Sidebar {
   @Input() isOpen = false;
   @Output() navigate = new EventEmitter<void>();
+  @Output() logout = new EventEmitter<void>();
 
   onNavigate(): void {
     this.navigate.emit();
+  }
+
+  onLogout(): void {
+    this.logout.emit();
   }
 }

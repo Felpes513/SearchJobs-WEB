@@ -1,1 +1,109 @@
-<p>application-history works!</p>
+<section class="history-page">
+  <div class="page-header">
+    <div>
+      <h2>Histórico</h2>
+      <p>Aqui vamos concentrar suas candidaturas e, por enquanto, também os matches de compatibilidade gerados pela IA.</p>
+    </div>
+
+    <button mat-stroked-button type="button" class="refresh-button" (click)="carregarHistorico()" [disabled]="carregando">
+      <mat-icon>refresh</mat-icon>
+      Atualizar
+    </button>
+  </div>
+
+  <div *ngIf="carregando" class="state-box">
+    Carregando histórico...
+  </div>
+
+  <div *ngIf="mensagemErro" class="state-box error">
+    {{ mensagemErro }}
+  </div>
+
+  <section class="history-section">
+    <div class="section-head">
+      <h3>Candidaturas</h3>
+      <span class="section-caption">Seção principal preparada para a futura rota de applications.</span>
+    </div>
+
+    <div *ngIf="candidaturasMock.length === 0" class="state-box empty">
+      Nenhuma candidatura registrada ainda.
+    </div>
+
+    <div *ngIf="candidaturasMock.length > 0" class="simple-list">
+      <article class="simple-card" *ngFor="let candidatura of candidaturasMock">
+        <div>
+          <h4>{{ candidatura.titulo }}</h4>
+          <p>{{ candidatura.empresa }}</p>
+        </div>
+        <button mat-stroked-button type="button" (click)="abrirLink(candidatura.jobUrl)">
+          <mat-icon>open_in_new</mat-icon>
+          Abrir vaga
+        </button>
+      </article>
+    </div>
+  </section>
+
+  <section class="history-section">
+    <div class="section-head">
+      <h3>Matches de compatibilidade</h3>
+      <span class="section-caption">Resultados salvos da rota GET /api/jobs/matches.</span>
+    </div>
+
+    <div *ngIf="!carregando && matches.length === 0" class="state-box empty">
+      Nenhum match calculado ainda. Use o botão "Buscar vagas com IA" para gerar novos resultados.
+    </div>
+
+    <div *ngIf="matches.length > 0" class="match-list">
+      <article class="match-card" *ngFor="let match of matches">
+        <div class="match-topbar">
+          <div class="platform-badge" *ngIf="getPlatform(match.jobUrl) as platform">
+            <span class="platform-logo" [attr.data-platform]="platform.key">{{ platform.logoText }}</span>
+            <span class="platform-name">{{ platform.label }}</span>
+          </div>
+
+          <div class="platform-badge fallback" *ngIf="!getPlatform(match.jobUrl)">
+            <span class="platform-logo fallback">
+              <mat-icon>language</mat-icon>
+            </span>
+            <span class="platform-name">Plataforma externa</span>
+          </div>
+
+          <span class="score-badge" [class]="getScoreClass(match.score)">{{ match.score | number:'1.0-1' }}</span>
+        </div>
+
+        <h4>{{ match.titulo }}</h4>
+        <p class="company">{{ match.empresa }}</p>
+
+        <div class="meta-row">
+          <span>{{ match.localizacao || 'Localização não informada' }}</span>
+          <span>{{ match.modeloTrabalho || 'Modelo não informado' }}</span>
+        </div>
+
+        <p class="justification">{{ match.justificativa }}</p>
+
+        <div class="match-columns">
+          <div>
+            <h5>Pontos fortes</h5>
+            <div class="tag-list">
+              <span class="tag positive" *ngFor="let ponto of match.pontosFortres">{{ ponto }}</span>
+            </div>
+          </div>
+
+          <div>
+            <h5>Gaps</h5>
+            <div class="tag-list">
+              <span class="tag warning" *ngFor="let gap of match.gaps">{{ gap }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-actions">
+          <button mat-stroked-button type="button" (click)="abrirLink(match.jobUrl)">
+            <mat-icon>open_in_new</mat-icon>
+            Abrir vaga
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+</section>

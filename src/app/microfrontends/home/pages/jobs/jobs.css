@@ -1,0 +1,227 @@
+.jobs-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 0;
+  max-width: 720px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.refresh-button {
+  flex-shrink: 0;
+}
+
+.state-box {
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  border: 1px solid #dbe7f5;
+  border-radius: 18px;
+  padding: 20px;
+  color: #334155;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.state-box.error {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #9f1239;
+}
+
+.state-box.success {
+  background: #ecfdf3;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.state-box.empty {
+  border-style: dashed;
+}
+
+.jobs-list {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.job-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fbff);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.07);
+}
+
+.job-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.platform-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.platform-logo[data-platform='linkedin'] {
+  background: #0a66c2;
+}
+
+.platform-logo[data-platform='indeed'] {
+  background: #2557a7;
+}
+
+.platform-logo[data-platform='catho'] {
+  background: #e11d48;
+}
+
+.platform-logo[data-platform='gupy'] {
+  background: #6d28d9;
+}
+
+.platform-logo[data-platform='glassdoor'] {
+  background: #0caa41;
+}
+
+.platform-logo[data-platform='infojobs'] {
+  background: #2563eb;
+}
+
+.platform-logo.fallback {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.platform-logo.fallback .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.platform-name {
+  color: #334155;
+  font-weight: 700;
+}
+
+.publish-date {
+  color: #64748b;
+  font-size: 0.92rem;
+  text-align: right;
+}
+
+.job-header h3 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.company {
+  margin: 0;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.job-meta span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.salary {
+  margin: 0;
+  color: #166534;
+  font-weight: 800;
+}
+
+.description {
+  margin: 0;
+  color: #475569;
+  line-height: 1.65;
+}
+
+.job-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.link-button {
+  border-radius: 999px;
+}
+
+@media (max-width: 720px) {
+  .page-header {
+    flex-direction: column;
+  }
+
+  .refresh-button {
+    width: 100%;
+  }
+
+  .job-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .publish-date {
+    text-align: left;
+  }
+
+  .job-actions {
+    justify-content: stretch;
+  }
+
+  .link-button {
+    width: 100%;
+  }
+}

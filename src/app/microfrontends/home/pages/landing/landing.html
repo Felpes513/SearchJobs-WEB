@@ -11,7 +11,7 @@
 
   <div class="mobile-backdrop" (click)="closeMenu()"></div>
 
-  <app-sidebar [isOpen]="menuOpen" (navigate)="closeMenu()"></app-sidebar>
+  <app-sidebar [isOpen]="menuOpen" (navigate)="closeMenu()" (logout)="logout()"></app-sidebar>
 
   <main class="content">
     <router-outlet></router-outlet>

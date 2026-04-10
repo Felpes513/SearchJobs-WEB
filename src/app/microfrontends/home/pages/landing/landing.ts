@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Sidebar } from '../../../../layout/sidebar/sidebar';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -11,6 +12,9 @@ import { Sidebar } from '../../../../layout/sidebar/sidebar';
   styleUrl: './landing.css',
 })
 export class Landing {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   menuOpen = false;
 
   toggleMenu(): void {
@@ -19,5 +23,11 @@ export class Landing {
 
   closeMenu(): void {
     this.menuOpen = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.menuOpen = false;
+    this.router.navigateByUrl('/login');
   }
 }

@@ -1,0 +1,40 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Voce se candidatou para esta vaga?</h2>
+        <p *ngIf="vaga">
+          Depois de abrir <strong>{{ vaga.titulo }}</strong>, confirme aqui para salvar no historico.
+        </p>
+      </div>
+
+      <button
+        mat-icon-button
+        type="button"
+        class="close-button"
+        (click)="onClose()"
+        aria-label="Fechar modal"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="vaga">
+      <div class="job-summary">
+        <h3>{{ vaga.titulo }}</h3>
+        <p>{{ vaga.empresa }}</p>
+        <span>{{ vaga.localizacao || 'Localizacao nao informada' }}</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button mat-stroked-button type="button" class="secondary-button" (click)="onDecline()" [disabled]="salvando">
+        Ainda nao
+      </button>
+
+      <button mat-flat-button type="button" class="primary-button" (click)="onConfirm()" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Sim, me candidatei' }}
+      </button>
+    </div>
+  </div>
+</div>
