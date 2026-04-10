@@ -63,7 +63,6 @@ export class UploadResume {
     this.mensagemErro = '';
     this.mensagemSucesso = '';
 
-    // reseta estado do modal antes de novo fluxo
     this.modalAberto = false;
     this.dadosExtraidos = null;
     this.mensagemExtracao = '';
@@ -109,15 +108,13 @@ export class UploadResume {
           }
 
           this.dadosExtraidos = parsed;
-
-          // fecha e abre de novo para garantir novo ciclo
           this.modalAberto = false;
           this.cdr.detectChanges();
 
           this.modalAberto = true;
           this.cdr.detectChanges();
 
-          console.log('DADOS EXTRAÍDOS FINAL:', this.dadosExtraidos);
+          console.log('DADOS EXTRAIDOS FINAL:', this.dadosExtraidos);
           console.log('MODAL ABERTO?', this.modalAberto);
         } catch (error) {
           console.error('ERRO AO PARSEAR:', error);

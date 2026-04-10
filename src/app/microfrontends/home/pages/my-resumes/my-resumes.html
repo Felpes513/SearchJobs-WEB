@@ -1,29 +1,172 @@
 <section class="my-resumes-page">
   <div class="page-header">
-    <h2>Meus currículos</h2>
-    <p>Visualize todos os currículos enviados para a plataforma.</p>
+    <h2>Meu currículo</h2>
+    <p>Visualize os dados do currículo atual e o que já foi estruturado pela IA.</p>
   </div>
 
   <div *ngIf="carregando" class="state-box">
-    Carregando currículos...
+    Carregando currículo...
   </div>
 
   <div *ngIf="mensagemErro" class="state-box error">
     {{ mensagemErro }}
   </div>
 
-  <div *ngIf="!carregando && !mensagemErro && curriculos.length === 0" class="state-box empty">
+  <div *ngIf="!carregando && !mensagemErro && !curriculo" class="state-box empty">
     Você ainda não enviou nenhum currículo.
   </div>
 
-  <div *ngIf="!carregando && !mensagemErro && curriculos.length > 0" class="resume-list">
-    <div class="resume-card" *ngFor="let curriculo of curriculos">
-      <div class="resume-info">
-        <h3>{{ curriculo.fileName }}</h3>
-        <p><strong>ID:</strong> {{ curriculo.id }}</p>
-        <p><strong>Caminho:</strong> {{ curriculo.filePath }}</p>
-        <p><strong>Enviado em:</strong> {{ formatarData(curriculo.createdAt) }}</p>
+  <div *ngIf="!carregando && !mensagemErro && curriculo" class="resume-panel">
+    <section class="hero-card">
+      <div>
+        <div class="status-row">
+          <span class="status-badge" [class.pending]="!curriculo.extraido">
+            {{ curriculo.extraido ? 'Extraído pela IA' : 'Aguardando extração' }}
+          </span>
+          <span class="file-name">{{ curriculo.fileName }}</span>
+        </div>
+
+        <h3>{{ curriculo.nome || 'Currículo enviado' }}</h3>
+        <p class="hero-subtitle">
+          {{ curriculo.resumoProfissional || 'Os dados estruturados aparecerão aqui após a extração pela IA.' }}
+        </p>
       </div>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-label">Enviado em</span>
+          <strong>{{ formatarData(curriculo.createdAt) }}</strong>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Localização</span>
+          <strong>{{ obterLocalizacao() }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <div class="section-header">
+        <h4>Informações principais</h4>
+      </div>
+
+      <div class="field-grid">
+        <div class="field-box">
+          <span class="field-label">Nome</span>
+          <strong>{{ curriculo.nome || 'Não informado' }}</strong>
+        </div>
+        <div class="field-box">
+          <span class="field-label">Email</span>
+          <strong>{{ curriculo.email || 'Não informado' }}</strong>
+        </div>
+        <div class="field-box">
+          <span class="field-label">Telefone</span>
+          <strong>{{ curriculo.telefone || 'Não informado' }}</strong>
+        </div>
+        <div class="field-box">
+          <span class="field-label">Cidade / Estado</span>
+          <strong>{{ obterLocalizacao() }}</strong>
+        </div>
+        <div class="field-box">
+          <span class="field-label">LinkedIn</span>
+          <strong>{{ curriculo.linkedinUrl || 'Não informado' }}</strong>
+        </div>
+        <div class="field-box">
+          <span class="field-label">GitHub</span>
+          <strong>{{ curriculo.githubUrl || 'Não informado' }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card" *ngIf="curriculo.resumoProfissional">
+      <div class="section-header">
+        <h4>Resumo profissional</h4>
+      </div>
+      <p class="long-text">{{ curriculo.resumoProfissional }}</p>
+    </section>
+
+    <section class="section-card">
+      <div class="section-header">
+        <h4>Skills</h4>
+      </div>
+      <div class="tag-list" *ngIf="curriculo.skills?.length; else semSkills">
+        <span class="tag" *ngFor="let skill of curriculo.skills">{{ skill }}</span>
+      </div>
+      <ng-template #semSkills>
+        <p class="empty-text">Nenhuma skill estruturada até o momento.</p>
+      </ng-template>
+    </section>
+
+    <section class="section-card">
+      <div class="section-header">
+        <h4>Experiências</h4>
+      </div>
+      <div class="stack-list" *ngIf="curriculo.experiencias?.length; else semExperiencias">
+        <article class="stack-card" *ngFor="let experiencia of curriculo.experiencias">
+          <div class="stack-card-header">
+            <div>
+              <h5>{{ experiencia.cargo || 'Cargo não informado' }}</h5>
+              <p>{{ experiencia.empresa || 'Empresa não informada' }}</p>
+            </div>
+            <span>{{ formatarPeriodo(experiencia.dataInicio, experiencia.dataFim) }}</span>
+          </div>
+          <p class="long-text">{{ experiencia.descricao || 'Sem descrição informada.' }}</p>
+        </article>
+      </div>
+      <ng-template #semExperiencias>
+        <p class="empty-text">Nenhuma experiência estruturada até o momento.</p>
+      </ng-template>
+    </section>
+
+    <section class="section-card">
+      <div class="section-header">
+        <h4>Certificações</h4>
+      </div>
+      <div class="stack-list" *ngIf="curriculo.certificacoes?.length; else semCertificacoes">
+        <article class="stack-card" *ngFor="let certificacao of curriculo.certificacoes">
+          <div class="stack-card-header">
+            <div>
+              <h5>{{ certificacao.nome || 'Certificação sem nome' }}</h5>
+              <p>{{ certificacao.instituicao || 'Instituição não informada' }}</p>
+            </div>
+            <span>{{ certificacao.dataObtencao || 'Data não informada' }}</span>
+          </div>
+        </article>
+      </div>
+      <ng-template #semCertificacoes>
+        <p class="empty-text">Nenhuma certificação estruturada até o momento.</p>
+      </ng-template>
+    </section>
+
+    <section class="section-card">
+      <div class="section-header">
+        <h4>Projetos</h4>
+      </div>
+      <div class="stack-list" *ngIf="curriculo.projetos?.length; else semProjetos">
+        <article class="stack-card" *ngFor="let projeto of curriculo.projetos">
+          <div class="stack-card-header">
+            <div>
+              <h5>{{ projeto.nome || 'Projeto sem nome' }}</h5>
+              <p>{{ projeto.stack || 'Stack não informada' }}</p>
+            </div>
+            <span>{{ projeto.link || 'Sem link' }}</span>
+          </div>
+          <p class="long-text">{{ projeto.descricao || 'Sem descrição informada.' }}</p>
+        </article>
+      </div>
+      <ng-template #semProjetos>
+        <p class="empty-text">Nenhum projeto estruturado até o momento.</p>
+      </ng-template>
+    </section>
+
+    <div class="actions" *ngIf="curriculo.id">
+      <button
+        type="button"
+        class="delete-button"
+        [disabled]="excluindo"
+        (click)="deletarCurriculo()"
+      >
+        {{ excluindo ? 'Deletando...' : 'Deletar currículo' }}
+      </button>
     </div>
   </div>
 </section>

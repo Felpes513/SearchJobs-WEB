@@ -1,1 +1,79 @@
-<p>jobs works!</p>
+<section class="jobs-page">
+  <div class="page-header">
+    <div>
+      <h2>Vagas recomendadas</h2>
+      <p>Buscamos vagas com base no seu cargo desejado e priorizamos as mais relevantes para o seu perfil.</p>
+    </div>
+
+    <button mat-flat-button type="button" class="refresh-button" (click)="buscarVagas()" [disabled]="carregando">
+      <mat-icon>{{ carregando ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
+      {{ carregando ? 'Buscando...' : 'Buscar vagas com IA' }}
+    </button>
+  </div>
+
+  <div *ngIf="mensagemSucesso" class="state-box success">
+    {{ mensagemSucesso }}
+  </div>
+
+  <div *ngIf="carregando" class="state-box">
+    Buscando vagas recomendadas para voce...
+  </div>
+
+  <div *ngIf="mensagemErro" class="state-box error">
+    {{ mensagemErro }}
+  </div>
+
+  <div *ngIf="!carregando && !mensagemErro && vagas.length === 0" class="state-box empty">
+    Nenhuma vaga foi encontrada para o seu perfil no momento.
+  </div>
+
+  <div *ngIf="!carregando && !mensagemErro && vagas.length > 0" class="jobs-list">
+    <article class="job-card" *ngFor="let vaga of vagas">
+      <div class="job-topbar">
+        <div class="platform-badge" *ngIf="getPlatform(vaga.jobUrl) as platform" [attr.data-platform]="platform.key">
+          <span class="platform-logo" [attr.data-platform]="platform.key">{{ platform.logoText }}</span>
+          <span class="platform-name">{{ platform.label }}</span>
+        </div>
+
+        <div class="platform-badge fallback" *ngIf="!getPlatform(vaga.jobUrl)">
+          <span class="platform-logo fallback">
+            <mat-icon>language</mat-icon>
+          </span>
+          <span class="platform-name">Plataforma externa</span>
+        </div>
+
+        <span class="publish-date">{{ formatarData(vaga.dataPublicacao) }}</span>
+      </div>
+
+      <div class="job-header">
+        <h3>{{ vaga.titulo }}</h3>
+        <p class="company">{{ vaga.empresa }}</p>
+      </div>
+
+      <div class="job-meta">
+        <span>{{ vaga.localizacao || 'Localizacao nao informada' }}</span>
+        <span>{{ vaga.modeloTrabalho || 'Modelo nao informado' }}</span>
+        <span>{{ vaga.senioridade || 'Senioridade nao informada' }}</span>
+      </div>
+
+      <p class="salary" *ngIf="vaga.salario">{{ vaga.salario }}</p>
+      <p class="description">{{ resumirDescricao(vaga.descricao) }}</p>
+
+      <div class="job-actions">
+        <button mat-stroked-button type="button" class="link-button" (click)="abrirVaga(vaga)">
+          <mat-icon>open_in_new</mat-icon>
+          Abrir vaga
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <app-job-application-confirm-modal
+    [isOpen]="modalCandidaturaAberto"
+    [vaga]="vagaSelecionada"
+    [salvando]="salvandoCandidatura"
+    (close)="fecharModalCandidatura()"
+    (decline)="informarQueNaoSeCandidatou()"
+    (confirm)="confirmarCandidatura()"
+  ></app-job-application-confirm-modal>
+</section>

@@ -25,6 +25,13 @@ export const HOME_ROUTES: Routes = [
             (m) => m.MyResumes
           ),
       },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import('../pages/jobs/jobs').then(
+            (m) => m.Jobs
+          ),
+      },
     ],
   },
 ];
