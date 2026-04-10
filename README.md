@@ -1,81 +1,138 @@
-# SearchjobsFrontend
+# SearchJobs — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.4.
+> Interface web para o SearchJobs — encontre vagas que fazem sentido para o seu perfil, com a ajuda de inteligência artificial.
 
-## Docker
+---
 
-Build da imagem:
+## O que é o SearchJobs?
 
-```bash
-docker build -t searchjobs-frontend .
+O **SearchJobs** nasceu de uma dor real: procurar emprego é cansativo. São dezenas de plataformas, vagas genéricas que não têm nada a ver com você e horas perdidas lendo descrições que não combinam com o seu perfil.
+
+A ideia é simples — **e se um sistema pudesse ler o seu currículo, entender quem você é como profissional e te mostrar só as vagas que realmente valem a pena?**
+
+Este repositório é o **frontend web** do SearchJobs, consumindo a [SearchJobs API](https://github.com/seu-usuario/searchjobs-api).
+
+---
+
+## Como funciona?
+
+1. **Você faz login ou cria sua conta** — autenticação segura com JWT.
+2. **Envia seu currículo em PDF** — a IA extrai automaticamente suas skills, experiências, certificações e projetos.
+3. **O sistema busca vagas reais no mercado** — baseado no seu cargo desejado.
+4. **A IA analisa cada vaga e gera um score de compatibilidade** com o seu perfil, com justificativa.
+5. **Você vê só o que importa** — ordenado por relevância, com link direto para se candidatar.
+
+---
+
+## Funcionalidades
+
+- 🔐 **Autenticação** — login e cadastro com JWT
+- 📄 **Upload de currículo** — envio de PDF com extração inteligente via IA
+- 📋 **Meus currículos** — listagem e visualização dos currículos enviados
+- 🔍 **Busca de vagas** — rankeamento de vagas com score de compatibilidade
+- 📝 **Histórico de candidaturas** — acompanhe as vagas que você se candidatou
+- 👤 **Perfil profissional** — visualize e gerencie seus dados extraídos
+
+---
+
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Angular 21 |
+| Linguagem | TypeScript 5.9 |
+| UI Components | Angular Material 21 |
+| HTTP Client | Angular HttpClient + Interceptors |
+| Testes | Vitest |
+| Servidor (produção) | Nginx 1.27 |
+| Infraestrutura | Docker + Docker Compose |
+
+---
+
+## Estrutura de telas
+
+```
+/login              → Tela de login
+/register           → Tela de cadastro
+/landing/upload     → Upload de currículo (padrão após login)
+/landing/resumes    → Meus currículos
+/landing/jobs       → Busca de vagas com score IA
+/landing/history    → Histórico de candidaturas
+/perfil             → Perfil profissional
 ```
 
-Rodando o container:
+---
+
+## Pré-requisitos
+
+- [Node.js 22+](https://nodejs.org)
+- [npm 11+](https://www.npmjs.com)
+- A [SearchJobs API](https://github.com/seu-usuario/searchjobs-api) rodando localmente ou em um servidor
+
+---
+
+## Rodando localmente
 
 ```bash
-docker run --rm -p 4200:80 searchjobs-frontend
+# Clone o repositório
+git clone https://github.com/seu-usuario/searchjobs-frontend.git
+cd searchjobs-frontend
+
+# Instale as dependências
+npm install
+
+# Suba o servidor de desenvolvimento
+npm start
 ```
 
-Ou com Docker Compose:
+A aplicação estará disponível em `http://localhost:4200`.
+
+> Certifique-se de que a SearchJobs API está rodando em `http://localhost:8080`.
+
+---
+
+## Rodando com Docker (recomendado para produção)
 
 ```bash
+# Build e suba o container
 docker compose up --build
 ```
 
-A aplicação ficará disponível em `http://localhost:4200`.
+A aplicação estará disponível em `http://localhost:4200`.
 
-## Development server
+O build usa uma imagem multi-stage: **Node 22** para compilar o Angular e **Nginx 1.27** para servir os arquivos estáticos.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## Scripts disponíveis
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Comando | Descrição |
+|---|---|
+| `npm start` | Sobe o servidor de desenvolvimento |
+| `npm run build` | Gera o build de produção |
+| `npm run watch` | Build contínuo em modo desenvolvimento |
+| `npm test` | Executa os testes com Vitest |
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Por que foi desenvolvido?
 
-```bash
-ng generate component component-name
-```
+O SearchJobs é um projeto pessoal criado com dois objetivos:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+1. **Resolver um problema real** — tornar a busca de emprego mais inteligente e menos frustrante para desenvolvedores e profissionais de tecnologia.
 
-```bash
-ng generate --help
-```
+2. **Consolidar conhecimentos** em desenvolvimento frontend moderno com Angular, consumo de APIs com IA e boas práticas de arquitetura.
 
-## Building
+---
 
-To build the project run:
+## Próximos passos
 
-```bash
-ng build
-```
+- [ ] Hospedagem em VPS com domínio próprio
+- [ ] Notificações por e-mail quando novas vagas compatíveis aparecerem
+- [ ] Suporte a múltiplos idiomas nas buscas (inglês, espanhol)
+- [ ] Tema claro/escuro
+- [ ] Testes de integração e E2E
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+<p align="center">Desenvolvido por <strong>Felipe Souza Moreira</strong></p>
