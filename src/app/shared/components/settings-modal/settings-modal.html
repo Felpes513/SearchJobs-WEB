@@ -1,0 +1,65 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Configurações</h2>
+        <p>Personalize preferências do sistema e revise opções gerais da sua conta.</p>
+      </div>
+
+      <button mat-icon-button type="button" class="close-button" (click)="onClose()" aria-label="Fechar modal">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <section class="config-section">
+        <h3>Linguagem</h3>
+        <label class="field-label" for="languageSelect">Idioma da interface</label>
+        <select id="languageSelect" [(ngModel)]="language">
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="en-US">English (US)</option>
+        </select>
+      </section>
+
+      <section class="config-section">
+        <h3>Tema</h3>
+        <div class="option-list">
+          <label class="option-item">
+            <input type="radio" name="theme" value="system" [(ngModel)]="theme" />
+            <span>Usar tema do sistema</span>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="theme" value="light" [(ngModel)]="theme" />
+            <span>Tema claro</span>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="theme" value="dark" [(ngModel)]="theme" />
+            <span>Tema escuro</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="config-section">
+        <h3>Termos de uso</h3>
+        <div class="terms-box">
+          Ao utilizar a plataforma, você concorda com o processamento das informações do seu perfil e currículo
+          para recomendação de vagas, análise de compatibilidade e acompanhamento de candidaturas.
+        </div>
+        <label class="option-item checkbox">
+          <input type="checkbox" [(ngModel)]="termsAccepted" />
+          <span>Li e concordo com os termos de uso atuais</span>
+        </label>
+      </section>
+    </div>
+
+    <div class="modal-footer">
+      <button mat-stroked-button type="button" class="secondary-button" (click)="onClose()">
+        Cancelar
+      </button>
+
+      <button mat-flat-button type="button" class="primary-button" (click)="onSave()">
+        Salvar preferências
+      </button>
+    </div>
+  </div>
+</div>

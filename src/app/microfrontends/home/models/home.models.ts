@@ -101,6 +101,19 @@ export interface JobSearchResult {
   cachedAt: string | null;
 }
 
+export interface JobMatchItem {
+  jobId: number;
+  titulo: string;
+  empresa: string;
+  localizacao: string;
+  modeloTrabalho: string;
+  jobUrl: string;
+  score: number;
+  justificativa: string;
+  pontosFortres: string[];
+  gaps: string[];
+}
+
 export interface ParsedResumeData {
   nome?: string;
   email?: string;

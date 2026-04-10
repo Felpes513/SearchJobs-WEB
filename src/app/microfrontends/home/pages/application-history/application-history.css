@@ -1,0 +1,282 @@
+.history-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 0;
+  max-width: 760px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.section-head h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.section-caption {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.state-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px;
+  color: #475569;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.state-box.error {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #9f1239;
+}
+
+.state-box.empty {
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.simple-list,
+.match-list {
+  display: grid;
+  gap: 16px;
+}
+
+.simple-card,
+.match-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+}
+
+.simple-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.simple-card h4,
+.match-card h4 {
+  margin: 0 0 6px;
+  color: #0f172a;
+}
+
+.simple-card p,
+.company,
+.justification {
+  margin: 0;
+  color: #475569;
+}
+
+.match-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.platform-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.platform-logo[data-platform='linkedin'] {
+  background: #0a66c2;
+}
+
+.platform-logo[data-platform='indeed'] {
+  background: #2557a7;
+}
+
+.platform-logo[data-platform='catho'] {
+  background: #e11d48;
+}
+
+.platform-logo[data-platform='gupy'] {
+  background: #6d28d9;
+}
+
+.platform-logo[data-platform='glassdoor'] {
+  background: #0caa41;
+}
+
+.platform-logo[data-platform='infojobs'] {
+  background: #2563eb;
+}
+
+.platform-logo.fallback {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.platform-logo.fallback .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.platform-name {
+  color: #334155;
+  font-weight: 700;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.score-badge.strong {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.score-badge.medium {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.score-badge.light {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.score-badge.weak {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.meta-row span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.match-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.match-columns h5 {
+  margin: 0 0 10px;
+  color: #0f172a;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.tag.positive {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.tag.warning {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.match-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+  .page-header,
+  .section-head,
+  .simple-card,
+  .match-topbar,
+  .match-columns {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .refresh-button,
+  .simple-card button,
+  .match-actions button {
+    width: 100%;
+  }
+
+  .match-actions {
+    justify-content: stretch;
+  }
+}

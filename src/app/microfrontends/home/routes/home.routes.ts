@@ -32,6 +32,13 @@ export const HOME_ROUTES: Routes = [
             (m) => m.Jobs
           ),
       },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('../pages/application-history/application-history').then(
+            (m) => m.ApplicationHistory
+          ),
+      },
     ],
   },
 ];

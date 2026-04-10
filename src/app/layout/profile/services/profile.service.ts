@@ -61,6 +61,10 @@ export class ProfileService {
     return this.http.put<Project[]>(`${this.apiUrl}/projects`, payload);
   }
 
+  syncGithubProjects(): Observable<Project[]> {
+    return this.http.post<Project[]>(`${this.apiUrl}/github/sync`, {});
+  }
+
   loadAllProfileData() {
     return forkJoin({
       profile: this.getProfile(),

@@ -1,0 +1,36 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>{{ title }}</h2>
+        <p *ngIf="description">{{ description }}</p>
+      </div>
+
+      <button
+        mat-icon-button
+        type="button"
+        class="close-button"
+        (click)="onClose()"
+        aria-label="Fechar modal"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="details">
+      <div class="details-box">
+        {{ details }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button mat-stroked-button type="button" class="secondary-button" (click)="onClose()" [disabled]="loading">
+        {{ cancelLabel }}
+      </button>
+
+      <button mat-flat-button type="button" class="primary-button" (click)="onConfirm()" [disabled]="loading">
+        {{ loading ? 'Sincronizando...' : confirmLabel }}
+      </button>
+    </div>
+  </div>
+</div>

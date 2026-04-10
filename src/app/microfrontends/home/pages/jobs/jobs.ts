@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { finalize } from 'rxjs/operators';
 import { JobApplicationConfirmModal } from '../../../../shared/components/job-application-confirm-modal/job-application-confirm-modal';
 import { JobItem } from '../../models/home.models';
 import { ResumeService } from '../../services/home.service';
@@ -24,30 +25,25 @@ export class Jobs implements OnInit {
 
   vagas: JobItem[] = [];
   carregando = true;
+  analisandoMatches = false;
   salvandoCandidatura = false;
   mensagemErro = '';
   mensagemSucesso = '';
-  mensagemCache = '';
   modalCandidaturaAberto = false;
   vagaSelecionada: JobItem | null = null;
 
   ngOnInit(): void {
-    this.buscarVagas();
+    this.carregarVagas();
   }
 
-  buscarVagas(): void {
+  carregarVagas(): void {
     this.carregando = true;
     this.mensagemErro = '';
-    this.mensagemSucesso = '';
-    this.mensagemCache = '';
 
     this.resumeService.buscarVagas().subscribe({
       next: (response) => {
         this.vagas = response.vagas;
         this.carregando = false;
-        this.mensagemCache = response.fromCache && response.cachedAt
-          ? `Exibindo vagas em cache salvas em ${this.formatarDataHora(response.cachedAt)}.`
-          : '';
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -56,7 +52,38 @@ export class Jobs implements OnInit {
         this.mensagemErro =
           error?.error?.mensagem ||
           error?.error?.message ||
-          'Nao foi possivel buscar as vagas agora.';
+          'Não foi possível carregar as vagas agora.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  buscarVagasComIA(): void {
+    if (this.analisandoMatches) {
+      return;
+    }
+
+    this.analisandoMatches = true;
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    this.resumeService.analisarCompatibilidadeVagas().pipe(
+      finalize(() => {
+        this.analisandoMatches = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (matches) => {
+        this.mensagemSucesso = matches.length > 0
+          ? 'Compatibilidade analisada com sucesso. Confira os matches no histórico.'
+          : 'A análise foi executada, mas nenhum match foi gerado.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.mensagemErro =
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Não foi possível analisar a compatibilidade das vagas agora.';
         this.cdr.detectChanges();
       },
     });
@@ -105,12 +132,12 @@ export class Jobs implements OnInit {
         this.salvandoCandidatura = false;
         this.modalCandidaturaAberto = false;
         this.vagaSelecionada = null;
-        this.mensagemSucesso = `Candidatura para "${titulo}" salva no historico mockado.`;
+        this.mensagemSucesso = `Candidatura para "${titulo}" salva no histórico mockado.`;
         this.cdr.detectChanges();
       },
       error: () => {
         this.salvandoCandidatura = false;
-        this.mensagemErro = 'Nao foi possivel registrar a candidatura no historico.';
+        this.mensagemErro = 'Não foi possível registrar a candidatura no histórico.';
         this.cdr.detectChanges();
       },
     });
@@ -118,7 +145,7 @@ export class Jobs implements OnInit {
 
   formatarData(data: string): string {
     if (!data) {
-      return 'Data nao informada';
+      return 'Data não informada';
     }
 
     const parsed = new Date(`${data}T00:00:00`);
@@ -129,19 +156,9 @@ export class Jobs implements OnInit {
     return parsed.toLocaleDateString('pt-BR');
   }
 
-  formatarDataHora(data: string): string {
-    const parsed = new Date(data);
-
-    if (Number.isNaN(parsed.getTime())) {
-      return data;
-    }
-
-    return parsed.toLocaleString('pt-BR');
-  }
-
   resumirDescricao(descricao: string): string {
     if (!descricao) {
-      return 'Descricao nao informada.';
+      return 'Descrição não informada.';
     }
 
     return descricao.length > 220 ? `${descricao.slice(0, 220)}...` : descricao;

@@ -41,6 +41,11 @@
     cursor: pointer;
   }
 
+  .layout.menu-open .mobile-menu-button {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .mobile-backdrop {
     position: fixed;
     inset: 0;

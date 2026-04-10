@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
 import {
   JobApplicationHistoryItem,
+  JobMatchItem,
   JobSearchCacheEntry,
   JobSearchResult,
   JobItem,
@@ -66,6 +67,32 @@ export class ResumeService {
         fromCache: false,
         cachedAt: new Date().toISOString(),
       }))
+    );
+  }
+
+  obterVagasEmCache(): JobSearchResult | null {
+    const cache = this.obterCacheVagas();
+
+    if (!cache) {
+      return null;
+    }
+
+    return {
+      vagas: cache.vagas,
+      fromCache: true,
+      cachedAt: cache.cachedAt,
+    };
+  }
+
+  analisarCompatibilidadeVagas(): Observable<JobMatchItem[]> {
+    return this.http.post<JobMatchItem[]>('http://localhost:8080/api/jobs/match-all', {}).pipe(
+      map((matches) => Array.isArray(matches) ? matches : [])
+    );
+  }
+
+  listarMatchesSalvos(): Observable<JobMatchItem[]> {
+    return this.http.get<JobMatchItem[]>('http://localhost:8080/api/jobs/matches').pipe(
+      map((matches) => Array.isArray(matches) ? matches : [])
     );
   }
 
