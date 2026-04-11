@@ -42,7 +42,7 @@ export class Login {
     this.authService.login(payload).subscribe({
       next: () => {
         this.carregando = false;
-        this.router.navigate(['/landing']);
+        this.router.navigate(['/landing/home']);
       },
       error: (error) => {
         this.carregando = false;

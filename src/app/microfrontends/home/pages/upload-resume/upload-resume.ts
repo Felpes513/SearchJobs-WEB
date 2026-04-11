@@ -21,6 +21,7 @@ export class UploadResume {
   extraindo = false;
   mensagemErro = '';
   mensagemSucesso = '';
+  estaArrastandoArquivo = false;
 
   modalAberto = false;
   dadosExtraidos: ParsedResumeData | null = null;
@@ -29,27 +30,28 @@ export class UploadResume {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
+    this.processarArquivoSelecionado(file);
+  }
 
-    this.mensagemErro = '';
-    this.mensagemSucesso = '';
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.estaArrastandoArquivo = true;
+  }
 
-    if (!file) {
-      this.selectedFile = null;
-      this.fileName = '';
-      return;
-    }
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.estaArrastandoArquivo = false;
+  }
 
-    const isPdf = file.type === 'application/pdf';
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.estaArrastandoArquivo = false;
 
-    if (!isPdf) {
-      this.selectedFile = null;
-      this.fileName = '';
-      this.mensagemErro = 'Apenas arquivos PDF são aceitos.';
-      return;
-    }
-
-    this.selectedFile = file;
-    this.fileName = file.name;
+    const file = event.dataTransfer?.files?.[0] ?? null;
+    this.processarArquivoSelecionado(file);
   }
 
   enviarCurriculo(): void {
@@ -95,7 +97,7 @@ export class UploadResume {
         this.mensagemExtracao = response.mensagem;
 
         try {
-          let parsed: any;
+          let parsed: unknown;
 
           if (typeof response.parsedJson === 'string') {
             const cleaned = response.parsedJson
@@ -107,19 +109,13 @@ export class UploadResume {
             parsed = response.parsedJson;
           }
 
-          this.dadosExtraidos = parsed;
+          this.dadosExtraidos = parsed as ParsedResumeData;
           this.modalAberto = false;
           this.cdr.detectChanges();
 
           this.modalAberto = true;
           this.cdr.detectChanges();
-
-          console.log('DADOS EXTRAIDOS FINAL:', this.dadosExtraidos);
-          console.log('MODAL ABERTO?', this.modalAberto);
-        } catch (error) {
-          console.error('ERRO AO PARSEAR:', error);
-          console.log('VALOR QUE QUEBROU:', response.parsedJson);
-
+        } catch {
           this.mensagemErro = 'Erro ao interpretar os dados extraídos do currículo.';
           this.cdr.detectChanges();
         }
@@ -138,5 +134,29 @@ export class UploadResume {
   fecharModal(): void {
     this.modalAberto = false;
     this.cdr.detectChanges();
+  }
+
+  private processarArquivoSelecionado(file: File | null): void {
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    if (!file) {
+      this.selectedFile = null;
+      this.fileName = '';
+      return;
+    }
+
+    const isPdf =
+      file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+    if (!isPdf) {
+      this.selectedFile = null;
+      this.fileName = '';
+      this.mensagemErro = 'Apenas arquivos PDF são aceitos.';
+      return;
+    }
+
+    this.selectedFile = file;
+    this.fileName = file.name;
   }
 }

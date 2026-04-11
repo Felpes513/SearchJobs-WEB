@@ -1,0 +1,316 @@
+.landing-home {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  padding: clamp(24px, 4vw, 36px);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 42%),
+    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.16), transparent 38%),
+    linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid #dbeafe;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.hero-copy h1 {
+  margin: 16px 0 14px;
+  font-size: clamp(2rem, 4.8vw, 3.45rem);
+  line-height: 1.08;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+}
+
+.hero-copy p {
+  margin: 0;
+  max-width: 700px;
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.primary-action,
+.secondary-action {
+  border-radius: 999px;
+  min-height: 48px;
+  padding: 0 20px;
+}
+
+.hero-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.hero-stat,
+.hero-highlight {
+  padding: 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #e2e8f0;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-label {
+  color: #64748b;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-stat strong {
+  color: #0f172a;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.hero-highlight {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.hero-highlight .mat-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  color: #0ea5e9;
+  margin-top: 2px;
+}
+
+.hero-highlight p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.65;
+}
+
+.actions-section,
+.journey-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-heading h2 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+}
+
+.section-heading p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 250px;
+  padding: 22px;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
+}
+
+.action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  color: #1d4ed8;
+}
+
+.action-card h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.action-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.65;
+  flex: 1;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.journey-step {
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.05);
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.journey-step h3 {
+  margin: 16px 0 10px;
+  color: #0f172a;
+}
+
+.journey-step p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.65;
+}
+
+@media (max-width: 960px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions a,
+  .action-card a {
+    width: 100%;
+  }
+}
+
+:host-context([data-app-theme='dark']) .hero-card {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 42%),
+    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.14), transparent 38%),
+    linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+  border-color: #1e3a5f;
+}
+
+:host-context([data-app-theme='dark']) .eyebrow {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .hero-copy h1 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .hero-copy p {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .hero-stat,
+:host-context([data-app-theme='dark']) .hero-highlight {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .stat-label {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .hero-stat strong {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .hero-highlight p {
+  color: #cbd5e1;
+}
+
+:host-context([data-app-theme='dark']) .section-heading h2 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .section-heading p {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .action-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .action-icon {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .action-card h3 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .action-card p {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .journey-step {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .step-number {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+:host-context([data-app-theme='dark']) .journey-step h3 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .journey-step p {
+  color: #94a3b8;
+}

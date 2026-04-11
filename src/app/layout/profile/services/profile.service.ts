@@ -12,12 +12,14 @@ import {
   UpdateProjectsPayload,
   UpdateSkillsPayload,
 } from '../models/profile.model';
+import { AppSettingsResponse, AppSettingsValue } from '../../../shared/components/settings-modal/settings-modal';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
   private readonly apiUrl = 'http://localhost:8080/api/profile';
+  private readonly settingsApiUrl = 'http://localhost:8080/api/settings';
 
   constructor(private http: HttpClient) {}
 
@@ -65,6 +67,14 @@ export class ProfileService {
     return this.http.post<Project[]>(`${this.apiUrl}/github/sync`, {});
   }
 
+  getSettings(): Observable<AppSettingsResponse> {
+    return this.http.get<AppSettingsResponse>(this.settingsApiUrl);
+  }
+
+  patchSettings(payload: Partial<AppSettingsValue>): Observable<AppSettingsResponse> {
+    return this.http.patch<AppSettingsResponse>(this.settingsApiUrl, payload);
+  }
+
   loadAllProfileData() {
     return forkJoin({
       profile: this.getProfile(),
@@ -72,6 +82,7 @@ export class ProfileService {
       experiences: this.getExperiences(),
       certifications: this.getCertifications(),
       projects: this.getProjects(),
+      settings: this.getSettings(),
     });
   }
 }

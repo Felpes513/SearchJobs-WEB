@@ -55,6 +55,27 @@ button {
   touch-action: manipulation;
 }
 
+a,
+button,
+label,
+select,
+input[type='radio'],
+input[type='checkbox'],
+input[type='file'],
+[role='button'],
+[tabindex]:not([tabindex='-1']) {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[disabled],
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
 app-root {
   display: block;
   min-height: 100vh;

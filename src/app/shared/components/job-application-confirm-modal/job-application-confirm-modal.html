@@ -25,6 +25,11 @@
         <p>{{ vaga.empresa }}</p>
         <span>{{ vaga.localizacao || 'Localizacao nao informada' }}</span>
       </div>
+
+      <p class="warning-text" *ngIf="vaga.id === null">
+        Esta vaga ainda não foi sincronizada com um identificador interno. Clique em "Buscar vagas com IA"
+        e depois tente salvá-la novamente.
+      </p>
     </div>
 
     <div class="modal-footer">
@@ -32,7 +37,7 @@
         Ainda nao
       </button>
 
-      <button mat-flat-button type="button" class="primary-button" (click)="onConfirm()" [disabled]="salvando">
+      <button mat-flat-button type="button" class="primary-button" (click)="onConfirm()" [disabled]="salvando || vaga?.id === null">
         {{ salvando ? 'Salvando...' : 'Sim, me candidatei' }}
       </button>
     </div>

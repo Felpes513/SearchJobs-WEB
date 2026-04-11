@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs/operators';
 import { JobApplicationConfirmModal } from '../../../../shared/components/job-application-confirm-modal/job-application-confirm-modal';
-import { JobItem } from '../../models/home.models';
+import { JobItem, JobMatchItem } from '../../models/home.models';
 import { ResumeService } from '../../services/home.service';
 
 type JobPlatform = {
@@ -43,6 +43,7 @@ export class Jobs implements OnInit {
     this.resumeService.buscarVagas().subscribe({
       next: (response) => {
         this.vagas = response.vagas;
+        this.sincronizarIdsDasVagas(this.resumeService.obterMatchesEmCache());
         this.carregando = false;
         this.cdr.detectChanges();
       },
@@ -74,8 +75,9 @@ export class Jobs implements OnInit {
       })
     ).subscribe({
       next: (matches) => {
+        this.sincronizarIdsDasVagas(matches);
         this.mensagemSucesso = matches.length > 0
-          ? 'Compatibilidade analisada com sucesso. Confira os matches no histórico.'
+          ? 'Compatibilidade analisada com sucesso. As vagas analisadas agora já podem ser salvas no histórico.'
           : 'A análise foi executada, mas nenhum match foi gerado.';
         this.cdr.detectChanges();
       },
@@ -123,21 +125,35 @@ export class Jobs implements OnInit {
       return;
     }
 
+    const jobId = this.vagaSelecionada.id;
+
+    if (jobId === null || jobId === undefined) {
+      this.mensagemErro =
+        'Esta vaga ainda não possui identificador interno válido. Clique em "Buscar vagas com IA" para sincronizar as vagas analisadas e tente novamente.';
+      this.modalCandidaturaAberto = false;
+      this.vagaSelecionada = null;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.salvandoCandidatura = true;
     this.mensagemErro = '';
 
-    this.resumeService.registrarCandidaturaMock(this.vagaSelecionada).subscribe({
+    this.resumeService.criarCandidatura(jobId).subscribe({
       next: () => {
         const titulo = this.vagaSelecionada?.titulo ?? 'a vaga';
         this.salvandoCandidatura = false;
         this.modalCandidaturaAberto = false;
         this.vagaSelecionada = null;
-        this.mensagemSucesso = `Candidatura para "${titulo}" salva no histórico mockado.`;
+        this.mensagemSucesso = `Candidatura para "${titulo}" registrada no histórico com sucesso.`;
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (error) => {
         this.salvandoCandidatura = false;
-        this.mensagemErro = 'Não foi possível registrar a candidatura no histórico.';
+        this.mensagemErro =
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Não foi possível registrar a candidatura agora.';
         this.cdr.detectChanges();
       },
     });
@@ -192,5 +208,47 @@ export class Jobs implements OnInit {
     }
 
     return null;
+  }
+
+  private sincronizarIdsDasVagas(matches: JobMatchItem[]): void {
+    if (!matches.length || !this.vagas.length) {
+      return;
+    }
+
+    const vagasAtualizadas = this.vagas.map((vaga) => {
+      const matchRelacionado = matches.find((match) => this.ehMesmaVaga(vaga, match));
+
+      if (!matchRelacionado) {
+        return vaga;
+      }
+
+      return {
+        ...vaga,
+        id: matchRelacionado.jobId,
+      };
+    });
+
+    this.vagas = vagasAtualizadas;
+  }
+
+  private ehMesmaVaga(vaga: JobItem, match: JobMatchItem): boolean {
+    const jobUrlIgual =
+      this.normalizarTexto(vaga.jobUrl) &&
+      this.normalizarTexto(vaga.jobUrl) === this.normalizarTexto(match.jobUrl);
+
+    if (jobUrlIgual) {
+      return true;
+    }
+
+    const tituloIgual =
+      this.normalizarTexto(vaga.titulo) === this.normalizarTexto(match.titulo);
+    const empresaIgual =
+      this.normalizarTexto(vaga.empresa) === this.normalizarTexto(match.empresa);
+
+    return tituloIgual && empresaIgual;
+  }
+
+  private normalizarTexto(valor: string | null | undefined): string {
+    return (valor ?? '').trim().toLowerCase();
   }
 }

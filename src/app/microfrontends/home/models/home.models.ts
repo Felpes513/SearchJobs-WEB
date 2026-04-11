@@ -63,7 +63,7 @@ export interface ResumeExtractResponse {
 }
 
 export interface JobItem {
-  id: number;
+  id: number | null;
   externalId: string;
   titulo: string;
   empresa: string;
@@ -74,20 +74,6 @@ export interface JobItem {
   salario: string | null;
   jobUrl: string;
   dataPublicacao: string;
-}
-
-export interface JobApplicationHistoryItem {
-  jobId: number;
-  externalId: string;
-  titulo: string;
-  empresa: string;
-  localizacao: string;
-  modeloTrabalho: string;
-  senioridade: string;
-  salario: string | null;
-  jobUrl: string;
-  dataPublicacao: string;
-  appliedAt: string;
 }
 
 export interface JobSearchCacheEntry {
@@ -112,6 +98,47 @@ export interface JobMatchItem {
   justificativa: string;
   pontosFortres: string[];
   gaps: string[];
+}
+
+export interface JobMatchCacheEntry {
+  matches: JobMatchItem[];
+  cachedAt: string;
+}
+
+export type ApplicationStatus =
+  | 'PENDENTE'
+  | 'SALVA'
+  | 'EM_FILA'
+  | 'CANDIDATADO'
+  | 'EM_ANALISE'
+  | 'ENTREVISTA'
+  | 'APROVADO'
+  | 'REJEITADO'
+  | 'IGNORADO';
+
+export interface ApplicationItem {
+  id: number;
+  jobId: number;
+  titulo: string;
+  empresa: string;
+  localizacao: string;
+  modeloTrabalho: string;
+  jobUrl: string;
+  status: ApplicationStatus;
+  observacao: string | null;
+  dataCandidatura: string;
+}
+
+export interface ApplicationKanbanResponse {
+  pendente: ApplicationItem[];
+  salva: ApplicationItem[];
+  emFila: ApplicationItem[];
+  candidatado: ApplicationItem[];
+  emAnalise: ApplicationItem[];
+  entrevista: ApplicationItem[];
+  aprovado: ApplicationItem[];
+  rejeitado: ApplicationItem[];
+  ignorado: ApplicationItem[];
 }
 
 export interface ParsedResumeData {

@@ -5,7 +5,7 @@
       <p>Buscamos vagas com base no seu cargo desejado e priorizamos as mais relevantes para o seu perfil.</p>
     </div>
 
-    <button mat-flat-button type="button" class="refresh-button" (click)="buscarVagasComIA()" [disabled]="carregando">
+    <button mat-flat-button type="button" class="refresh-button" (click)="buscarVagasComIA()" [disabled]="carregando || analisandoMatches">
       <mat-icon>{{ analisandoMatches ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
       {{ analisandoMatches ? 'Analisando matches...' : 'Buscar vagas com IA' }}
     </button>
@@ -51,9 +51,9 @@
       </div>
 
       <div class="job-meta">
-        <span>{{ vaga.localizacao || 'Localizacao nao informada' }}</span>
-        <span>{{ vaga.modeloTrabalho || 'Modelo nao informado' }}</span>
-        <span>{{ vaga.senioridade || 'Senioridade nao informada' }}</span>
+        <span>{{ vaga.localizacao || 'Localização não informada' }}</span>
+        <span>{{ vaga.modeloTrabalho || 'Modelo não informado' }}</span>
+        <span>{{ vaga.senioridade || 'Senioridade não informada' }}</span>
       </div>
 
       <p class="salary" *ngIf="vaga.salario">{{ vaga.salario }}</p>

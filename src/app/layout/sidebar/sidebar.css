@@ -1,12 +1,14 @@
 :host.sidebar-host {
   width: var(--sidebar-width);
   flex: 0 0 var(--sidebar-width);
+  height: 100vh;
   display: block;
+  overflow-y: auto;
 }
 
 .sidebar {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -222,4 +224,58 @@
   .logout-button {
     min-height: 48px;
   }
+}
+
+:host-context([data-app-theme='dark']) .sidebar {
+  background: #1e293b;
+  border-right-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .profile-card:hover {
+  background: #2d3748;
+}
+
+:host-context([data-app-theme='dark']) .profile-text h1 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .profile-text span {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .menu-item {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .menu-item:hover {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .menu-item.active {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .profile-card.active {
+  background: #1e3a5f;
+}
+
+:host-context([data-app-theme='dark']) .profile-card.active .profile-text h1,
+:host-context([data-app-theme='dark']) .profile-card.active .profile-text span {
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .profile-card.active .profile-avatar {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .sidebar-brand {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .mobile-close-button {
+  background: #2d3748;
+  color: #e2e8f0;
 }
