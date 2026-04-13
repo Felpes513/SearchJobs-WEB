@@ -30,6 +30,16 @@
   flex-shrink: 0;
 }
 
+.refresh-button .mat-icon {
+  flex-shrink: 0;
+}
+
+.hourglass-animated {
+  display: inline-block;
+  transform-origin: center;
+  transition: transform 320ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 .state-box {
   background: linear-gradient(135deg, #ffffff, #f8fbff);
   border: 1px solid #dbe7f5;

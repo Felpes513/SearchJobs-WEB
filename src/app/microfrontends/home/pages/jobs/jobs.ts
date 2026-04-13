@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs/operators';
@@ -19,7 +19,7 @@ type JobPlatform = {
   templateUrl: './jobs.html',
   styleUrl: './jobs.css',
 })
-export class Jobs implements OnInit {
+export class Jobs implements OnInit, OnDestroy {
   private resumeService = inject(ResumeService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -31,9 +31,19 @@ export class Jobs implements OnInit {
   mensagemSucesso = '';
   modalCandidaturaAberto = false;
   vagaSelecionada: JobItem | null = null;
+  hourglassIcon: 'hourglass_top' | 'hourglass_bottom' = 'hourglass_top';
+  hourglassRotation = 0;
+  private hourglassTimerId: ReturnType<typeof window.setTimeout> | null = null;
+  private readonly hourglassFallDuration = 900;
+  private readonly hourglassFlipDuration = 320;
+  private readonly hourglassPauseDuration = 120;
 
   ngOnInit(): void {
     this.carregarVagas();
+  }
+
+  ngOnDestroy(): void {
+    this.pararAnimacaoAmpulheta();
   }
 
   carregarVagas(): void {
@@ -65,30 +75,36 @@ export class Jobs implements OnInit {
     }
 
     this.analisandoMatches = true;
+    this.iniciarAnimacaoAmpulheta();
     this.mensagemErro = '';
     this.mensagemSucesso = '';
 
-    this.resumeService.analisarCompatibilidadeVagas().pipe(
-      finalize(() => {
-        this.analisandoMatches = false;
-        this.cdr.detectChanges();
-      })
-    ).subscribe({
-      next: (matches) => {
-        this.sincronizarIdsDasVagas(matches);
-        this.mensagemSucesso = matches.length > 0
-          ? 'Compatibilidade analisada com sucesso. As vagas analisadas agora já podem ser salvas no histórico.'
-          : 'A análise foi executada, mas nenhum match foi gerado.';
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        this.mensagemErro =
-          error?.error?.mensagem ||
-          error?.error?.message ||
-          'Não foi possível analisar a compatibilidade das vagas agora.';
-        this.cdr.detectChanges();
-      },
-    });
+    this.resumeService
+      .analisarCompatibilidadeVagas()
+      .pipe(
+        finalize(() => {
+          this.analisandoMatches = false;
+          this.pararAnimacaoAmpulheta();
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (matches) => {
+          this.sincronizarIdsDasVagas(matches);
+          this.mensagemSucesso =
+            matches.length > 0
+              ? 'Compatibilidade analisada com sucesso. As vagas analisadas agora já podem ser salvas no histórico.'
+              : 'A análise foi executada, mas nenhum match foi gerado.';
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          this.mensagemErro =
+            error?.error?.mensagem ||
+            error?.error?.message ||
+            'Não foi possível analisar a compatibilidade das vagas agora.';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   abrirVaga(vaga: JobItem): void {
@@ -240,15 +256,64 @@ export class Jobs implements OnInit {
       return true;
     }
 
-    const tituloIgual =
-      this.normalizarTexto(vaga.titulo) === this.normalizarTexto(match.titulo);
-    const empresaIgual =
-      this.normalizarTexto(vaga.empresa) === this.normalizarTexto(match.empresa);
+    const tituloIgual = this.normalizarTexto(vaga.titulo) === this.normalizarTexto(match.titulo);
+    const empresaIgual = this.normalizarTexto(vaga.empresa) === this.normalizarTexto(match.empresa);
 
     return tituloIgual && empresaIgual;
   }
 
   private normalizarTexto(valor: string | null | undefined): string {
     return (valor ?? '').trim().toLowerCase();
+  }
+
+  private iniciarAnimacaoAmpulheta(): void {
+    this.pararAnimacaoAmpulheta();
+    this.hourglassIcon = 'hourglass_bottom';
+    this.hourglassRotation = 0;
+    this.cdr.detectChanges();
+    this.executarCicloAmpulheta();
+  }
+
+  private executarCicloAmpulheta(): void {
+    if (!this.analisandoMatches) {
+      return;
+    }
+
+    this.agendarProximoPasso(this.hourglassFallDuration, () => {
+      this.hourglassRotation += 180;
+      this.cdr.detectChanges();
+
+      this.agendarProximoPasso(this.hourglassFlipDuration, () => {
+        this.hourglassIcon =
+          this.hourglassIcon === 'hourglass_top' ? 'hourglass_bottom' : 'hourglass_top';
+        this.cdr.detectChanges();
+
+        this.agendarProximoPasso(this.hourglassPauseDuration, () => {
+          this.executarCicloAmpulheta();
+        });
+      });
+    });
+  }
+
+  private agendarProximoPasso(delay: number, callback: () => void): void {
+    this.hourglassTimerId = window.setTimeout(() => {
+      this.hourglassTimerId = null;
+
+      if (!this.analisandoMatches) {
+        return;
+      }
+
+      callback();
+    }, delay);
+  }
+
+  private pararAnimacaoAmpulheta(): void {
+    if (this.hourglassTimerId !== null) {
+      window.clearTimeout(this.hourglassTimerId);
+      this.hourglassTimerId = null;
+    }
+
+    this.hourglassIcon = 'hourglass_top';
+    this.hourglassRotation = 0;
   }
 }

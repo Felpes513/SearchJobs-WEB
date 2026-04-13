@@ -6,7 +6,12 @@
     </div>
 
     <button mat-flat-button type="button" class="refresh-button" (click)="buscarVagasComIA()" [disabled]="carregando || analisandoMatches">
-      <mat-icon>{{ analisandoMatches ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
+      <mat-icon
+        [class.hourglass-animated]="analisandoMatches"
+        [style.transform]="analisandoMatches ? 'rotate(' + hourglassRotation + 'deg)' : null"
+      >
+        {{ analisandoMatches ? hourglassIcon : 'auto_awesome' }}
+      </mat-icon>
       {{ analisandoMatches ? 'Analisando matches...' : 'Buscar vagas com IA' }}
     </button>
   </div>
