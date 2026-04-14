@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { ApiMessageResponse, ApiResponse } from '../../../core/models/api-response.model';
 import {
   ApplicationKanbanResponse,
   ApplicationStatus,
@@ -30,14 +31,17 @@ export class ResumeService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<UploadResumeResponse>(`${this.apiUrl}/upload`, formData);
+    return this.http.post<ApiResponse<UploadResumeResponse>>(`${this.apiUrl}/upload`, formData).pipe(
+      map((response) => response.data),
+    );
   }
 
   extractResume(resumeId: number): Observable<ResumeExtractResponse> {
-    return this.http.post<ResumeExtractResponse>(
+    return this.http.post<ApiResponse<ResumeExtractResponse>>(
       `${this.apiUrl}/${resumeId}/extract`,
       {}
     ).pipe(
+      map((response) => response.data),
       tap(() => {
         this.invalidarCacheVagas();
         this.invalidarCacheMatches();
@@ -46,11 +50,15 @@ export class ResumeService {
   }
 
   listarCurriculos(): Observable<ResumeListResponse> {
-    return this.http.get<ResumeListResponse>(this.apiUrl);
+    return this.http.get<ApiResponse<ResumeListResponse>>(this.apiUrl).pipe(
+      map((response) => response.data),
+    );
   }
 
   deletarCurriculo(resumeId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${resumeId}`);
+    return this.http.delete<ApiMessageResponse>(`${this.apiUrl}/${resumeId}`).pipe(
+      map(() => void 0),
+    );
   }
 
   buscarVagas(): Observable<JobSearchResult> {
@@ -64,8 +72,9 @@ export class ResumeService {
       });
     }
 
-    return this.http.get<JobItem[]>('http://localhost:8080/api/jobs/search').pipe(
-      map((vagas) => Array.isArray(vagas) ? vagas.map((vaga) => this.normalizarVaga(vaga)) : []),
+    return this.http.get<ApiResponse<JobItem[]>>('http://localhost:8080/api/jobs/search').pipe(
+      map((response) => Array.isArray(response.data) ? response.data : []),
+      map((vagas) => vagas.map((vaga) => this.normalizarVaga(vaga))),
       tap((vagas) => this.salvarCacheVagas(vagas)),
       map((vagas) => ({
         vagas,
@@ -96,15 +105,15 @@ export class ResumeService {
       return of(cache.matches);
     }
 
-    return this.http.post<JobMatchItem[]>('http://localhost:8080/api/jobs/match-all', {}).pipe(
-      map((matches) => Array.isArray(matches) ? matches : []),
+    return this.http.post<ApiResponse<JobMatchItem[]>>('http://localhost:8080/api/jobs/match-all', {}).pipe(
+      map((response) => Array.isArray(response.data) ? response.data : []),
       tap((matches) => this.salvarCacheMatches(matches))
     );
   }
 
   listarMatchesSalvos(): Observable<JobMatchItem[]> {
-    return this.http.get<JobMatchItem[]>('http://localhost:8080/api/jobs/matches').pipe(
-      map((matches) => Array.isArray(matches) ? matches : [])
+    return this.http.get<ApiResponse<JobMatchItem[]>>('http://localhost:8080/api/jobs/matches').pipe(
+      map((response) => Array.isArray(response.data) ? response.data : [])
     );
   }
 
@@ -113,24 +122,32 @@ export class ResumeService {
   }
 
   criarCandidatura(jobId: number, observacao = ''): Observable<void> {
-    return this.http.post<void>('http://localhost:8080/api/applications', {
+    return this.http.post<ApiMessageResponse>('http://localhost:8080/api/applications', {
       jobId,
       observacao,
-    });
+    }).pipe(
+      map(() => void 0),
+    );
   }
 
   listarKanbanCandidaturas(): Observable<ApplicationKanbanResponse> {
-    return this.http.get<ApplicationKanbanResponse>('http://localhost:8080/api/applications');
+    return this.http.get<ApiResponse<ApplicationKanbanResponse>>('http://localhost:8080/api/applications').pipe(
+      map((response) => response.data),
+    );
   }
 
   atualizarStatusCandidatura(id: number, status: ApplicationStatus): Observable<void> {
-    return this.http.put<void>(`http://localhost:8080/api/applications/${id}/status`, {
+    return this.http.put<ApiMessageResponse>(`http://localhost:8080/api/applications/${id}/status`, {
       status,
-    });
+    }).pipe(
+      map(() => void 0),
+    );
   }
 
   deletarCandidatura(id: number): Observable<void> {
-    return this.http.delete<void>(`http://localhost:8080/api/applications/${id}`);
+    return this.http.delete<ApiMessageResponse>(`http://localhost:8080/api/applications/${id}`).pipe(
+      map(() => void 0),
+    );
   }
 
   private salvarCacheVagas(vagas: JobItem[]): void {

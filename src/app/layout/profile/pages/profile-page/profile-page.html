@@ -268,7 +268,12 @@
     [termsAccepted]="termsAccepted"
     [openAiApiKey]="openAiApiKey"
     [jsearchApiKey]="jsearchApiKey"
+    [accountEmail]="accountEmail"
+    [passwordResetSending]="passwordResetSending"
+    [passwordResetSuccessMessage]="passwordResetSuccessMessage"
+    [passwordResetErrorMessage]="passwordResetErrorMessage"
     (close)="closeSettingsModal()"
     (save)="saveSettings($event)"
+    (requestPasswordReset)="requestPasswordReset($event)"
   ></app-settings-modal>
 </section>

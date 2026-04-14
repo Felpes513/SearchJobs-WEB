@@ -39,9 +39,14 @@ export class SettingsModal {
   @Input() termsAccepted = false;
   @Input() openAiApiKey = '';
   @Input() jsearchApiKey = '';
+  @Input() accountEmail = '';
+  @Input() passwordResetSending = false;
+  @Input() passwordResetSuccessMessage = '';
+  @Input() passwordResetErrorMessage = '';
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppSettingsValue>();
+  @Output() requestPasswordReset = new EventEmitter<string>();
 
   hideOpenAiApiKey = true;
   hideJsearchApiKey = true;
@@ -58,6 +63,10 @@ export class SettingsModal {
       openAiApiKey: this.openAiApiKey.trim(),
       jsearchApiKey: this.jsearchApiKey.trim(),
     });
+  }
+
+  onRequestPasswordReset(): void {
+    this.requestPasswordReset.emit(this.accountEmail.trim());
   }
 
   toggleOpenAiVisibility(): void {

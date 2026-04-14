@@ -1,6 +1,7 @@
 export interface Profile {
   id?: number;
   resumoProfissional?: string;
+  cargoDesejado?: string;
   cidade?: string;
   estado?: string;
   linkedinUrl?: string;

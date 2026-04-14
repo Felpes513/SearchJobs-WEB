@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { ThemeService } from '../../../../core/services/theme.service';
+import { AuthService } from '../../../../microfrontends/auth/services/auth.service';
 
 import { ProfileService } from '../../services/profile.service';
 import {
@@ -46,10 +47,15 @@ export class ProfilePageComponent implements OnInit {
   jsearchApiKeyMasked = '';
   hasOpenAiApiKey = false;
   hasJsearchApiKey = false;
+  accountEmail = '';
+  passwordResetSending = false;
+  passwordResetSuccessMessage = '';
+  passwordResetErrorMessage = '';
 
   profileForm!: FormGroup;
 
   private themeService = inject(ThemeService);
+  private authService = inject(AuthService);
 
   constructor(
     private fb: FormBuilder,
@@ -60,6 +66,7 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.accountEmail = this.authService.getAuthenticatedEmail();
     this.loadData();
   }
 
@@ -271,12 +278,18 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openSettingsModal(): void {
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
+    this.accountEmail = this.authService.getAuthenticatedEmail();
     this.settingsModalOpen = true;
     this.cdr.detectChanges();
   }
 
   closeSettingsModal(): void {
     this.settingsModalOpen = false;
+    this.passwordResetSending = false;
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
     this.cdr.detectChanges();
   }
 
@@ -307,6 +320,34 @@ export class ProfilePageComponent implements OnInit {
           error?.error?.mensagem ||
           error?.error?.message ||
           'Não foi possível salvar as configurações do sistema.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  requestPasswordReset(email: string): void {
+    if (!email.trim() || this.passwordResetSending) {
+      return;
+    }
+
+    this.passwordResetSending = true;
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
+
+    this.authService.forgotPassword({ email: email.trim() }).subscribe({
+      next: () => {
+        this.passwordResetSending = false;
+        this.passwordResetSuccessMessage =
+          'Se existir uma conta com esse e-mail, enviaremos um link de redefinicao em instantes.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.passwordResetSending = false;
+        this.passwordResetErrorMessage =
+          error?.error?.campos?.email ||
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Nao foi possivel solicitar a redefinicao de senha agora.';
         this.cdr.detectChanges();
       },
     });

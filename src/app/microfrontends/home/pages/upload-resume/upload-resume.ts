@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ResumeService } from '../../services/home.service';
-import { ParsedResumeData } from '../../models/home.models';
 import { ExtractPreviewModal } from '../../components/extract-preview-modal/extract-preview-modal';
+import { ParsedResumeData, ResumeItem } from '../../models/home.models';
+import { ResumeService } from '../../services/home.service';
 
 @Component({
   selector: 'app-upload-resume',
@@ -64,7 +64,6 @@ export class UploadResume {
     this.extraindo = false;
     this.mensagemErro = '';
     this.mensagemSucesso = '';
-
     this.modalAberto = false;
     this.dadosExtraidos = null;
     this.mensagemExtracao = '';
@@ -72,7 +71,7 @@ export class UploadResume {
     this.resumeService.uploadResume(this.selectedFile).subscribe({
       next: (response) => {
         this.carregando = false;
-        this.mensagemSucesso = `Currículo "${response.fileName}" enviado com sucesso.`;
+        this.mensagemSucesso = `Curriculo "${response.fileName}" enviado com sucesso.`;
         this.fileName = '';
         this.selectedFile = null;
 
@@ -81,7 +80,9 @@ export class UploadResume {
       error: (error) => {
         this.carregando = false;
         this.mensagemErro =
-          error?.error?.mensagem || error?.error?.message || 'Não foi possível enviar o currículo.';
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Nao foi possivel enviar o curriculo.';
         this.cdr.detectChanges();
       },
     });
@@ -93,39 +94,40 @@ export class UploadResume {
 
     this.resumeService.extractResume(resumeId).subscribe({
       next: (response) => {
-        this.extraindo = false;
         this.mensagemExtracao = response.mensagem;
 
-        try {
-          let parsed: unknown;
+        this.resumeService.listarCurriculos().subscribe({
+          next: (curriculos) => {
+            this.extraindo = false;
 
-          if (typeof response.parsedJson === 'string') {
-            const cleaned = response.parsedJson
-              .replace(/\n/g, '')
-              .replace(/\\"/g, '"');
+            const curriculo = curriculos.content.find((item) => item.id === resumeId) ?? null;
 
-            parsed = JSON.parse(cleaned);
-          } else {
-            parsed = response.parsedJson;
-          }
+            if (!curriculo) {
+              this.mensagemErro = 'Nao foi possivel carregar os dados extraidos do curriculo.';
+              this.cdr.detectChanges();
+              return;
+            }
 
-          this.dadosExtraidos = parsed as ParsedResumeData;
-          this.modalAberto = false;
-          this.cdr.detectChanges();
+            this.dadosExtraidos = this.mapearCurriculoParaPreview(curriculo);
+            this.modalAberto = false;
+            this.cdr.detectChanges();
 
-          this.modalAberto = true;
-          this.cdr.detectChanges();
-        } catch {
-          this.mensagemErro = 'Erro ao interpretar os dados extraídos do currículo.';
-          this.cdr.detectChanges();
-        }
+            this.modalAberto = true;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.extraindo = false;
+            this.mensagemErro = 'Nao foi possivel carregar os dados extraidos do curriculo.';
+            this.cdr.detectChanges();
+          },
+        });
       },
       error: (error) => {
         this.extraindo = false;
         this.mensagemErro =
           error?.error?.mensagem ||
           error?.error?.message ||
-          'Não foi possível extrair os dados do currículo.';
+          'Nao foi possivel extrair os dados do curriculo.';
         this.cdr.detectChanges();
       },
     });
@@ -146,17 +148,51 @@ export class UploadResume {
       return;
     }
 
-    const isPdf =
-      file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
     if (!isPdf) {
       this.selectedFile = null;
       this.fileName = '';
-      this.mensagemErro = 'Apenas arquivos PDF são aceitos.';
+      this.mensagemErro = 'Apenas arquivos PDF sao aceitos.';
       return;
     }
 
     this.selectedFile = file;
     this.fileName = file.name;
+  }
+
+  private mapearCurriculoParaPreview(curriculo: ResumeItem): ParsedResumeData {
+    return {
+      nome: curriculo.nome ?? undefined,
+      email: curriculo.email ?? undefined,
+      telefone: curriculo.telefone ?? undefined,
+      skills: curriculo.skills ?? undefined,
+      experiencias: curriculo.experiencias?.map((experiencia) => ({
+        cargo: experiencia.cargo ?? undefined,
+        empresa: experiencia.empresa ?? undefined,
+        periodo: this.formatarPeriodoExtracao(experiencia.dataInicio, experiencia.dataFim),
+      })),
+      certificacoes: curriculo.certificacoes
+        ?.map((certificacao) => certificacao.nome ?? '')
+        .filter(Boolean),
+      projetos: curriculo.projetos?.map((projeto) => ({
+        nome: projeto.nome ?? undefined,
+        descricao: projeto.descricao ?? undefined,
+      })),
+    };
+  }
+
+  private formatarPeriodoExtracao(
+    dataInicio: string | null,
+    dataFim: string | null,
+  ): string | undefined {
+    const inicio = dataInicio ?? '';
+    const fim = dataFim ?? '';
+
+    if (!inicio && !fim) {
+      return undefined;
+    }
+
+    return [inicio || 'Inicio nao informado', fim || 'Atual'].join(' - ');
   }
 }

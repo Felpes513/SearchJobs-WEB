@@ -135,6 +135,10 @@
   flex-direction: column;
 }
 
+.form-group.compact {
+  gap: 0;
+}
+
 .form-group label {
   font-size: 0.95rem;
   font-weight: 700;
@@ -151,7 +155,10 @@
   outline: none;
   background: #ffffff;
   color: #0f172a;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .form-group input:focus {
@@ -165,6 +172,114 @@
   font-size: 0.82rem;
 }
 
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.remember-me input {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+}
+
+.inline-link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.forgot-password-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #dbe7f5;
+}
+
+.forgot-password-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.forgot-password-header strong {
+  color: #0f172a;
+}
+
+.forgot-password-header p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+.forgot-password-button {
+  width: 100%;
+}
+
+.loading-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: flex-end;
+  min-width: 18px;
+}
+
+.loading-dots span {
+  display: inline-block;
+  font-weight: 800;
+  line-height: 1;
+  animation: dot-wave 1.1s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+@keyframes dot-wave {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
 .message {
   padding: 12px 14px;
   border-radius: 12px;
@@ -175,6 +290,12 @@
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
+}
+
+.success {
+  background: #ecfdf3;
+  color: #166534;
+  border: 1px solid #bbf7d0;
 }
 
 .actions {
@@ -192,7 +313,10 @@
   font-size: 0.98rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .btn-primary {
@@ -243,6 +367,11 @@
   .login-page {
     padding: 16px;
     align-items: stretch;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .brand-highlights {

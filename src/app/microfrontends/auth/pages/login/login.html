@@ -2,9 +2,9 @@
   <div class="login-shell">
     <section class="login-brand-panel">
       <span class="brand-badge">SearchJobs</span>
-      <h1>Entre para continuar organizando currículo, vagas e candidaturas em um só lugar.</h1>
+      <h1>Entre para continuar organizando curriculo, vagas e candidaturas em um so lugar.</h1>
       <p>
-        Use sua conta para acessar recomendações com IA, acompanhar processos seletivos e manter seu
+        Use sua conta para acessar recomendacoes com IA, acompanhar processos seletivos e manter seu
         perfil profissional sempre pronto para novas oportunidades.
       </p>
 
@@ -15,15 +15,15 @@
         </article>
 
         <article class="highlight-card">
-          <strong>Histórico centralizado</strong>
-          <span>Acompanhe candidaturas e etapas do processo seletivo em um único fluxo.</span>
+          <strong>Historico centralizado</strong>
+          <span>Acompanhe candidaturas e etapas do processo seletivo em um unico fluxo.</span>
         </article>
       </div>
     </section>
 
     <section class="login-card">
       <div class="login-header">
-        <span class="eyebrow">Acesso à plataforma</span>
+        <span class="eyebrow">Acesso a plataforma</span>
         <h2>Entrar</h2>
         <p>Acesse sua conta para continuar no SearchJobs.</p>
       </div>
@@ -31,15 +31,8 @@
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <div class="form-group">
           <label for="email">E-mail</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="Digite seu e-mail"
-          />
-          <small *ngIf="campoInvalido('email')">
-            Informe um e-mail válido.
-          </small>
+          <input id="email" type="email" formControlName="email" placeholder="Digite seu e-mail" />
+          <small *ngIf="campoInvalido('email')">Informe um e-mail valido.</small>
         </div>
 
         <div class="form-group">
@@ -50,17 +43,84 @@
             formControlName="senha"
             placeholder="Digite sua senha"
           />
-          <small *ngIf="campoInvalido('senha')">
-            A senha é obrigatória.
-          </small>
+          <small *ngIf="campoInvalido('senha')">A senha e obrigatoria.</small>
+        </div>
+
+        <div class="form-row">
+          <label class="remember-me">
+            <input type="checkbox" formControlName="rememberMe" />
+            <span>Lembrar de mim</span>
+          </label>
+
+          <button type="button" class="inline-link" (click)="toggleForgotPassword()">
+            {{ forgotPasswordAberto ? 'Fechar' : 'Esqueci minha senha' }}
+          </button>
         </div>
 
         <div *ngIf="mensagemErro" class="message error">
           {{ mensagemErro }}
         </div>
 
+        <div *ngIf="forgotPasswordAberto" class="forgot-password-box">
+          <div class="forgot-password-header">
+            <strong>Redefinir senha</strong>
+            <p>
+              Informe seu e-mail e, se ele estiver cadastrado, enviaremos um link para redefinir sua
+              senha.
+            </p>
+          </div>
+
+          <div class="form-group compact">
+            <label for="resetEmail">E-mail para redefinicao</label>
+            <input
+              id="resetEmail"
+              type="email"
+              [formControl]="forgotPasswordForm.controls.email"
+              placeholder="Digite seu e-mail"
+            />
+            <small *ngIf="campoResetInvalido()">Informe um e-mail valido.</small>
+          </div>
+
+          <div *ngIf="mensagemErroReset" class="message error">
+            {{ mensagemErroReset }}
+          </div>
+
+          <div *ngIf="mensagemSucessoReset" class="message success">
+            {{ mensagemSucessoReset }}
+          </div>
+
+          <button
+            mat-stroked-button
+            type="button"
+            class="btn-secondary forgot-password-button"
+            [disabled]="enviandoReset"
+            (click)="enviarLinkRedefinicao()"
+          >
+            <ng-container *ngIf="!enviandoReset; else enviandoTemplate">
+              Enviar link de redefinicao
+            </ng-container>
+
+            <ng-template #enviandoTemplate>
+              <span class="loading-label">
+                Enviando link
+                <span class="loading-dots" aria-hidden="true">
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                </span>
+              </span>
+            </ng-template>
+          </button>
+        </div>
+
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit" class="btn-primary" [disabled]="carregando">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="btn-primary"
+            [disabled]="carregando"
+          >
             {{ carregando ? 'Entrando...' : 'Entrar' }}
           </button>
 

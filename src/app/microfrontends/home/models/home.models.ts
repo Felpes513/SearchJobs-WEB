@@ -58,8 +58,8 @@ export interface UploadResumeResponse {
 
 export interface ResumeExtractResponse {
   resumeId: number;
-  parsedJson: string;
   mensagem: string;
+  camposFaltando: string[];
 }
 
 export interface JobItem {
