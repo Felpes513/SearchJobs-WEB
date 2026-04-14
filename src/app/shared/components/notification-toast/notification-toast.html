@@ -1,0 +1,32 @@
+<section
+  *ngIf="notificacaoAtiva"
+  class="toast-wrapper"
+  [class.leaving]="saindo"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <article class="toast-card" [attr.data-type]="notificacaoAtiva.tipo">
+    <div class="toast-icon" [attr.data-type]="notificacaoAtiva.tipo">
+      <mat-icon>{{ getIcon(notificacaoAtiva.tipo) }}</mat-icon>
+    </div>
+
+    <div class="toast-copy">
+      <div class="toast-header">
+        <strong>{{ getTitle(notificacaoAtiva.tipo) }}</strong>
+        <span>{{ formatarData(notificacaoAtiva.createdAt) }}</span>
+      </div>
+
+      <p>{{ notificacaoAtiva.mensagem }}</p>
+    </div>
+
+    <button
+      mat-icon-button
+      type="button"
+      class="toast-close"
+      (click)="fecharNotificacao()"
+      aria-label="Fechar notificação"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </article>
+</section>

@@ -3,11 +3,12 @@ import { Router, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Sidebar } from '../../../../layout/sidebar/sidebar';
+import { NotificationToastComponent } from '../../../../shared/components/notification-toast/notification-toast';
 import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterOutlet, Sidebar, MatIconModule, MatButtonModule],
+  imports: [RouterOutlet, Sidebar, MatIconModule, MatButtonModule, NotificationToastComponent],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
 })

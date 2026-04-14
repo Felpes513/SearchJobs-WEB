@@ -10,6 +10,19 @@ export interface AppSettingsValue {
   language: string;
   theme: AppThemePreference;
   termsAccepted: boolean;
+  openAiApiKey: string;
+  jsearchApiKey: string;
+}
+
+export interface AppSettingsResponse {
+  language?: string | null;
+  theme?: AppThemePreference | null;
+  termsAccepted: boolean;
+  openAiApiKeyMasked?: string | null;
+  jsearchApiKeyMasked?: string | null;
+  hasOpenAiApiKey: boolean;
+  hasJsearchApiKey: boolean;
+  updatedAt?: string | null;
 }
 
 @Component({
@@ -24,9 +37,19 @@ export class SettingsModal {
   @Input() language = 'pt-BR';
   @Input() theme: AppThemePreference = 'system';
   @Input() termsAccepted = false;
+  @Input() openAiApiKey = '';
+  @Input() jsearchApiKey = '';
+  @Input() accountEmail = '';
+  @Input() passwordResetSending = false;
+  @Input() passwordResetSuccessMessage = '';
+  @Input() passwordResetErrorMessage = '';
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<AppSettingsValue>();
+  @Output() requestPasswordReset = new EventEmitter<string>();
+
+  hideOpenAiApiKey = true;
+  hideJsearchApiKey = true;
 
   onClose(): void {
     this.close.emit();
@@ -37,6 +60,20 @@ export class SettingsModal {
       language: this.language,
       theme: this.theme,
       termsAccepted: this.termsAccepted,
+      openAiApiKey: this.openAiApiKey.trim(),
+      jsearchApiKey: this.jsearchApiKey.trim(),
     });
+  }
+
+  onRequestPasswordReset(): void {
+    this.requestPasswordReset.emit(this.accountEmail.trim());
+  }
+
+  toggleOpenAiVisibility(): void {
+    this.hideOpenAiApiKey = !this.hideOpenAiApiKey;
+  }
+
+  toggleJsearchVisibility(): void {
+    this.hideJsearchApiKey = !this.hideJsearchApiKey;
   }
 }

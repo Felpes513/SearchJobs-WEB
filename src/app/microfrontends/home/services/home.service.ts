@@ -1,9 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { ApiMessageResponse, ApiResponse } from '../../../core/models/api-response.model';
 import {
-  JobApplicationHistoryItem,
+  ApplicationKanbanResponse,
+  ApplicationStatus,
+  JobMatchCacheEntry,
   JobMatchItem,
   JobSearchCacheEntry,
   JobSearchResult,
@@ -20,32 +23,42 @@ export class ResumeService {
   private http = inject(HttpClient);
 
   private readonly apiUrl = 'http://localhost:8080/api/resumes';
-  private readonly applicationHistoryStorageKey = 'jobApplicationHistoryMock';
   private readonly jobsCachePrefix = 'jobsSearchCache';
+  private readonly jobMatchesCachePrefix = 'jobsMatchAllCache';
   private readonly jobsCacheTtlMs = 10 * 60 * 1000;
 
   uploadResume(file: File): Observable<UploadResumeResponse> {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<UploadResumeResponse>(`${this.apiUrl}/upload`, formData);
+    return this.http.post<ApiResponse<UploadResumeResponse>>(`${this.apiUrl}/upload`, formData).pipe(
+      map((response) => response.data),
+    );
   }
 
   extractResume(resumeId: number): Observable<ResumeExtractResponse> {
-    return this.http.post<ResumeExtractResponse>(
+    return this.http.post<ApiResponse<ResumeExtractResponse>>(
       `${this.apiUrl}/${resumeId}/extract`,
       {}
     ).pipe(
-      tap(() => this.invalidarCacheVagas())
+      map((response) => response.data),
+      tap(() => {
+        this.invalidarCacheVagas();
+        this.invalidarCacheMatches();
+      })
     );
   }
 
   listarCurriculos(): Observable<ResumeListResponse> {
-    return this.http.get<ResumeListResponse>(this.apiUrl);
+    return this.http.get<ApiResponse<ResumeListResponse>>(this.apiUrl).pipe(
+      map((response) => response.data),
+    );
   }
 
   deletarCurriculo(resumeId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${resumeId}`);
+    return this.http.delete<ApiMessageResponse>(`${this.apiUrl}/${resumeId}`).pipe(
+      map(() => void 0),
+    );
   }
 
   buscarVagas(): Observable<JobSearchResult> {
@@ -59,8 +72,9 @@ export class ResumeService {
       });
     }
 
-    return this.http.get<JobItem[]>('http://localhost:8080/api/jobs/search').pipe(
-      map((vagas) => Array.isArray(vagas) ? vagas : []),
+    return this.http.get<ApiResponse<JobItem[]>>('http://localhost:8080/api/jobs/search').pipe(
+      map((response) => Array.isArray(response.data) ? response.data : []),
+      map((vagas) => vagas.map((vaga) => this.normalizarVaga(vaga))),
       tap((vagas) => this.salvarCacheVagas(vagas)),
       map((vagas) => ({
         vagas,
@@ -85,59 +99,55 @@ export class ResumeService {
   }
 
   analisarCompatibilidadeVagas(): Observable<JobMatchItem[]> {
-    return this.http.post<JobMatchItem[]>('http://localhost:8080/api/jobs/match-all', {}).pipe(
-      map((matches) => Array.isArray(matches) ? matches : [])
+    const cache = this.obterCacheMatches();
+
+    if (cache) {
+      return of(cache.matches);
+    }
+
+    return this.http.post<ApiResponse<JobMatchItem[]>>('http://localhost:8080/api/jobs/match-all', {}).pipe(
+      map((response) => Array.isArray(response.data) ? response.data : []),
+      tap((matches) => this.salvarCacheMatches(matches))
     );
   }
 
   listarMatchesSalvos(): Observable<JobMatchItem[]> {
-    return this.http.get<JobMatchItem[]>('http://localhost:8080/api/jobs/matches').pipe(
-      map((matches) => Array.isArray(matches) ? matches : [])
+    return this.http.get<ApiResponse<JobMatchItem[]>>('http://localhost:8080/api/jobs/matches').pipe(
+      map((response) => Array.isArray(response.data) ? response.data : [])
     );
   }
 
-  registrarCandidaturaMock(vaga: JobItem): Observable<void> {
-    const historicoAtual = this.listarHistoricoCandidaturasMock();
-
-    const novoItem: JobApplicationHistoryItem = {
-      jobId: vaga.id,
-      externalId: vaga.externalId,
-      titulo: vaga.titulo,
-      empresa: vaga.empresa,
-      localizacao: vaga.localizacao,
-      modeloTrabalho: vaga.modeloTrabalho,
-      senioridade: vaga.senioridade,
-      salario: vaga.salario,
-      jobUrl: vaga.jobUrl,
-      dataPublicacao: vaga.dataPublicacao,
-      appliedAt: new Date().toISOString(),
-    };
-
-    const historicoSemDuplicidade = historicoAtual.filter(
-      (item) => item.jobId !== vaga.id
-    );
-
-    localStorage.setItem(
-      this.applicationHistoryStorageKey,
-      JSON.stringify([novoItem, ...historicoSemDuplicidade])
-    );
-
-    return of(void 0).pipe(delay(350));
+  obterMatchesEmCache(): JobMatchItem[] {
+    return this.obterCacheMatches()?.matches ?? [];
   }
 
-  listarHistoricoCandidaturasMock(): JobApplicationHistoryItem[] {
-    const historicoBruto = localStorage.getItem(this.applicationHistoryStorageKey);
+  criarCandidatura(jobId: number, observacao = ''): Observable<void> {
+    return this.http.post<ApiMessageResponse>('http://localhost:8080/api/applications', {
+      jobId,
+      observacao,
+    }).pipe(
+      map(() => void 0),
+    );
+  }
 
-    if (!historicoBruto) {
-      return [];
-    }
+  listarKanbanCandidaturas(): Observable<ApplicationKanbanResponse> {
+    return this.http.get<ApiResponse<ApplicationKanbanResponse>>('http://localhost:8080/api/applications').pipe(
+      map((response) => response.data),
+    );
+  }
 
-    try {
-      const historico = JSON.parse(historicoBruto);
-      return Array.isArray(historico) ? historico : [];
-    } catch {
-      return [];
-    }
+  atualizarStatusCandidatura(id: number, status: ApplicationStatus): Observable<void> {
+    return this.http.put<ApiMessageResponse>(`http://localhost:8080/api/applications/${id}/status`, {
+      status,
+    }).pipe(
+      map(() => void 0),
+    );
+  }
+
+  deletarCandidatura(id: number): Observable<void> {
+    return this.http.delete<ApiMessageResponse>(`http://localhost:8080/api/applications/${id}`).pipe(
+      map(() => void 0),
+    );
   }
 
   private salvarCacheVagas(vagas: JobItem[]): void {
@@ -199,6 +209,65 @@ export class ResumeService {
     return `${this.jobsCachePrefix}:${token}`;
   }
 
+  private salvarCacheMatches(matches: JobMatchItem[]): void {
+    const chave = this.obterChaveCacheMatches();
+
+    if (!chave) {
+      return;
+    }
+
+    const cache: JobMatchCacheEntry = {
+      matches,
+      cachedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(chave, JSON.stringify(cache));
+  }
+
+  private obterCacheMatches(): JobMatchCacheEntry | null {
+    const chave = this.obterChaveCacheMatches();
+
+    if (!chave) {
+      return null;
+    }
+
+    const cacheBruto = localStorage.getItem(chave);
+
+    if (!cacheBruto) {
+      return null;
+    }
+
+    try {
+      const cache = JSON.parse(cacheBruto) as JobMatchCacheEntry;
+      const cachedAtMs = new Date(cache.cachedAt).getTime();
+
+      if (
+        !Array.isArray(cache.matches) ||
+        !cache.cachedAt ||
+        Number.isNaN(cachedAtMs) ||
+        Date.now() - cachedAtMs > this.jobsCacheTtlMs
+      ) {
+        localStorage.removeItem(chave);
+        return null;
+      }
+
+      return cache;
+    } catch {
+      localStorage.removeItem(chave);
+      return null;
+    }
+  }
+
+  private obterChaveCacheMatches(): string | null {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) {
+      return null;
+    }
+
+    return `${this.jobMatchesCachePrefix}:${token}`;
+  }
+
   private invalidarCacheVagas(): void {
     const chave = this.obterChaveCacheVagas();
 
@@ -207,5 +276,33 @@ export class ResumeService {
     }
 
     localStorage.removeItem(chave);
+  }
+
+  private invalidarCacheMatches(): void {
+    const chave = this.obterChaveCacheMatches();
+
+    if (!chave) {
+      return;
+    }
+
+    localStorage.removeItem(chave);
+  }
+
+  private normalizarVaga(vaga: Partial<JobItem> & { jobId?: number | null }): JobItem {
+    const rawId = vaga.id ?? vaga.jobId ?? null;
+
+    return {
+      id: typeof rawId === 'number' && Number.isFinite(rawId) ? rawId : null,
+      externalId: vaga.externalId ?? '',
+      titulo: vaga.titulo ?? '',
+      empresa: vaga.empresa ?? '',
+      localizacao: vaga.localizacao ?? '',
+      modeloTrabalho: vaga.modeloTrabalho ?? '',
+      senioridade: vaga.senioridade ?? '',
+      descricao: vaga.descricao ?? '',
+      salario: vaga.salario ?? null,
+      jobUrl: vaga.jobUrl ?? '',
+      dataPublicacao: vaga.dataPublicacao ?? '',
+    };
   }
 }

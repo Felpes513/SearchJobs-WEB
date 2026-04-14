@@ -8,8 +8,15 @@ export const HOME_ROUTES: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'upload',
+        redirectTo: 'home',
         pathMatch: 'full',
+      },
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('../pages/landing-home/landing-home').then(
+            (m) => m.LandingHome
+          ),
       },
       {
         path: 'upload',

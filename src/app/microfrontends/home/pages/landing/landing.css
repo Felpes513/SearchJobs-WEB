@@ -1,6 +1,7 @@
 .layout {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
+  overflow: hidden;
   background: #f8fafc;
 }
 
@@ -15,12 +16,16 @@
 .content {
   flex: 1;
   min-width: 0;
+  height: 100%;
+  overflow-y: auto;
   padding: var(--content-gutter);
 }
 
 @media (max-width: 960px) {
   .layout {
     display: block;
+    height: auto;
+    overflow: visible;
   }
 
   .mobile-menu-button {
@@ -64,6 +69,8 @@
 
   .content {
     width: 100%;
+    height: auto;
+    overflow-y: visible;
     padding-top: 80px;
   }
 }
@@ -72,4 +79,8 @@
   .content {
     padding: 76px 16px 20px;
   }
+}
+
+:host-context([data-app-theme='dark']) .layout {
+  background: #0f172a;
 }

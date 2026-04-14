@@ -1,0 +1,71 @@
+<section class="landing-home">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <span class="eyebrow">Bem-vindo ao SearchJobs</span>
+      <h1>Seu ponto de partida para organizar currículo, vagas e candidaturas em um só lugar.</h1>
+      <p>
+        Aqui você consegue estruturar o perfil, encontrar oportunidades com apoio de IA e acompanhar
+        cada etapa do processo seletivo com muito mais clareza.
+      </p>
+
+      <div class="hero-actions">
+        <a mat-flat-button routerLink="/landing/upload" class="primary-action">
+          <mat-icon>upload_file</mat-icon>
+          Começar pelo currículo
+        </a>
+
+        <a mat-stroked-button routerLink="/landing/jobs" class="secondary-action">
+          <mat-icon>work_outline</mat-icon>
+          Ver vagas recomendadas
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <div class="hero-stat">
+        <span class="stat-label">Fluxo sugerido</span>
+        <strong>Currículo → Vagas → Matches → Histórico</strong>
+      </div>
+
+      <div class="hero-highlight">
+        <mat-icon>tips_and_updates</mat-icon>
+        <p>Se quiser um caminho simples: atualize o currículo primeiro e depois siga para a análise de vagas com IA.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="actions-section">
+    <div class="section-heading">
+      <h2>Atalhos principais</h2>
+      <p>Os acessos mais importantes para começar a usar a plataforma sem precisar procurar no menu.</p>
+    </div>
+
+    <div class="actions-grid">
+      <article class="action-card" *ngFor="let action of quickActions">
+        <span class="action-icon">
+          <mat-icon>{{ action.icon }}</mat-icon>
+        </span>
+        <h3>{{ action.title }}</h3>
+        <p>{{ action.description }}</p>
+        <a mat-stroked-button [routerLink]="action.route">
+          {{ action.cta }}
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <section class="journey-section">
+    <div class="section-heading">
+      <h2>Como aproveitar melhor a plataforma</h2>
+      <p>Um fluxo enxuto para transformar busca de emprego em um processo mais organizado e menos cansativo.</p>
+    </div>
+
+    <div class="journey-grid">
+      <article class="journey-step" *ngFor="let step of steps">
+        <span class="step-number">{{ step.number }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.text }}</p>
+      </article>
+    </div>
+  </section>
+</section>

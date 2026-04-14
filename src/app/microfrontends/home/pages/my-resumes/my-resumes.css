@@ -264,3 +264,93 @@
     width: 100%;
   }
 }
+
+:host-context([data-app-theme='dark']) .page-header h2 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .page-header p {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .state-box {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .state-box.error {
+  background: #3b0a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+:host-context([data-app-theme='dark']) .state-box.empty {
+  background: #0f172a;
+}
+
+:host-context([data-app-theme='dark']) .hero-card,
+:host-context([data-app-theme='dark']) .section-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .hero-card h3 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .hero-subtitle {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .meta-item {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: #1e3a5f;
+}
+
+:host-context([data-app-theme='dark']) .meta-label,
+:host-context([data-app-theme='dark']) .field-label {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .meta-item strong,
+:host-context([data-app-theme='dark']) .field-box strong {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .section-header h4 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .field-box {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .tag {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+:host-context([data-app-theme='dark']) .stack-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+:host-context([data-app-theme='dark']) .stack-card-header h5 {
+  color: #e2e8f0;
+}
+
+:host-context([data-app-theme='dark']) .stack-card-header p,
+:host-context([data-app-theme='dark']) .stack-card-header span {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .long-text,
+:host-context([data-app-theme='dark']) .empty-text {
+  color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .file-name {
+  color: #94a3b8;
+}

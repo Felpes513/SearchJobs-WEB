@@ -1,8 +1,11 @@
 <section class="history-page">
   <div class="page-header">
     <div>
-      <h2>Histórico</h2>
-      <p>Aqui vamos concentrar suas candidaturas e, por enquanto, também os matches de compatibilidade gerados pela IA.</p>
+      <h2>Histórico de candidaturas</h2>
+      <p>
+        Aqui ficam suas vagas organizadas por etapa do processo seletivo. Os matches de compatibilidade
+        continuam logo abaixo como uma seção separada.
+      </p>
     </div>
 
     <button mat-stroked-button type="button" class="refresh-button" (click)="carregarHistorico()" [disabled]="carregando">
@@ -19,41 +22,132 @@
     {{ mensagemErro }}
   </div>
 
+  <div *ngIf="mensagemSucesso" class="state-box success">
+    {{ mensagemSucesso }}
+  </div>
+
   <section class="history-section">
     <div class="section-head">
-      <h3>Candidaturas</h3>
-      <span class="section-caption">Seção principal preparada para a futura rota de applications.</span>
+      <div>
+        <h3>Kanban de candidaturas</h3>
+      </div>
+
+      <label class="filter-field">
+        <span>Filtrar por status</span>
+        <select [value]="filtroStatus" (change)="onFiltroStatusChange($event)">
+          <option *ngFor="let option of statusFilterOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </label>
+
+      <span class="counter-pill">{{ getTotalCandidaturas() }} candidatura(s)</span>
     </div>
 
-    <div *ngIf="candidaturasMock.length === 0" class="state-box empty">
-      Nenhuma candidatura registrada ainda.
+    <div *ngIf="!carregando && getTotalCandidaturas() === 0" class="state-box empty">
+      Nenhuma candidatura registrada ainda. Quando você confirmar uma candidatura ao abrir uma vaga,
+      ela aparecerá aqui com status inicial pendente.
     </div>
 
-    <div *ngIf="candidaturasMock.length > 0" class="simple-list">
-      <article class="simple-card" *ngFor="let candidatura of candidaturasMock">
-        <div>
-          <h4>{{ candidatura.titulo }}</h4>
-          <p>{{ candidatura.empresa }}</p>
+    <div *ngIf="getTotalCandidaturas() > 0" class="kanban-grid">
+      <section class="kanban-column" *ngFor="let column of getVisibleColumns()">
+        <header class="kanban-column-header">
+          <div>
+            <h4>{{ column.label }}</h4>
+            <p>{{ column.description }}</p>
+          </div>
+          <span class="column-count">{{ getApplicationsCountByColumn(column.key) }}</span>
+        </header>
+
+        <div
+          class="kanban-list"
+          [class.scrollable]="getApplicationsCountByColumn(column.key) > 3"
+          *ngIf="getApplicationsCountByColumn(column.key) > 0; else emptyColumn"
+        >
+          <article class="application-card" *ngFor="let candidatura of getApplicationsByColumn(column.key)">
+            <div class="match-topbar">
+              <div class="platform-badge" *ngIf="getPlatform(candidatura.jobUrl) as platform">
+                <span class="platform-logo" [attr.data-platform]="platform.key">{{ platform.logoText }}</span>
+                <span class="platform-name">{{ platform.label }}</span>
+              </div>
+
+              <div class="platform-badge fallback" *ngIf="!getPlatform(candidatura.jobUrl)">
+                <span class="platform-logo fallback">
+                  <mat-icon>language</mat-icon>
+                </span>
+                <span class="platform-name">Plataforma externa</span>
+              </div>
+            </div>
+
+            <h5>{{ candidatura.titulo }}</h5>
+            <p class="company">{{ candidatura.empresa }}</p>
+
+            <div class="meta-row">
+              <span>{{ candidatura.localizacao || 'Localização não informada' }}</span>
+              <span>{{ candidatura.modeloTrabalho || 'Modelo não informado' }}</span>
+            </div>
+
+            <p class="application-date">Criada em {{ formatarDataHora(candidatura.dataCandidatura) }}</p>
+
+            <p class="observation" *ngIf="candidatura.observacao">
+              {{ candidatura.observacao }}
+            </p>
+
+            <label class="status-field">
+              <span>Status do processo</span>
+              <select
+                [value]="candidatura.status"
+                [disabled]="estaProcessando(candidatura.id)"
+                (change)="atualizarStatus(candidatura, $event)"
+              >
+                <option *ngFor="let option of statusOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </label>
+
+            <div class="application-actions">
+              <button mat-stroked-button type="button" (click)="abrirLink(candidatura.jobUrl)">
+                <mat-icon>open_in_new</mat-icon>
+                Abrir vaga
+              </button>
+
+              <button
+                mat-stroked-button
+                type="button"
+                class="danger-button"
+                [disabled]="estaProcessando(candidatura.id)"
+                (click)="deletarCandidatura(candidatura)"
+              >
+                <mat-icon>delete</mat-icon>
+                Excluir
+              </button>
+            </div>
+          </article>
         </div>
-        <button mat-stroked-button type="button" (click)="abrirLink(candidatura.jobUrl)">
-          <mat-icon>open_in_new</mat-icon>
-          Abrir vaga
-        </button>
-      </article>
+
+        <ng-template #emptyColumn>
+          <div class="kanban-empty">
+            Nenhuma candidatura nesta etapa.
+          </div>
+        </ng-template>
+      </section>
     </div>
   </section>
 
   <section class="history-section">
     <div class="section-head">
-      <h3>Matches de compatibilidade</h3>
-      <span class="section-caption">Resultados salvos da rota GET /api/jobs/matches.</span>
+      <div>
+        <h3>Matches de compatibilidade</h3>
+        <span class="section-caption">Resultados salvos da rota `GET /api/jobs/matches`.</span>
+      </div>
     </div>
 
     <div *ngIf="!carregando && matches.length === 0" class="state-box empty">
       Nenhum match calculado ainda. Use o botão "Buscar vagas com IA" para gerar novos resultados.
     </div>
 
-    <div *ngIf="matches.length > 0" class="match-list">
+    <div *ngIf="matches.length > 0" class="match-list" [class.scrollable]="matches.length > 3">
       <article class="match-card" *ngFor="let match of matches">
         <div class="match-topbar">
           <div class="platform-badge" *ngIf="getPlatform(match.jobUrl) as platform">
@@ -98,7 +192,7 @@
         </div>
 
         <div class="match-actions">
-          <button mat-stroked-button type="button" (click)="abrirLink(match.jobUrl)">
+          <button mat-stroked-button type="button" (click)="abrirVagaPorMatch(match)">
             <mat-icon>open_in_new</mat-icon>
             Abrir vaga
           </button>
@@ -106,4 +200,13 @@
       </article>
     </div>
   </section>
+
+  <app-job-application-confirm-modal
+    [isOpen]="modalMatchAberto"
+    [vaga]="matchSelecionadoComoVaga"
+    [salvando]="salvandoCandidaturaMatch"
+    (close)="fecharModalMatch()"
+    (decline)="informarQueNaoSeCandidatouNoMatch()"
+    (confirm)="confirmarCandidaturaPorMatch()"
+  ></app-job-application-confirm-modal>
 </section>

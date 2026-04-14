@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, DOCUMENT, Location } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { AuthService } from '../../../../microfrontends/auth/services/auth.service';
 
 import { ProfileService } from '../../services/profile.service';
 import {
@@ -14,7 +16,12 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmationModal } from '../../../../shared/components/confirmation-modal/confirmation-modal';
-import { AppSettingsValue, AppThemePreference, SettingsModal } from '../../../../shared/components/settings-modal/settings-modal';
+import {
+  AppSettingsResponse,
+  AppSettingsValue,
+  AppThemePreference,
+  SettingsModal,
+} from '../../../../shared/components/settings-modal/settings-modal';
 
 @Component({
   selector: 'app-profile-page',
@@ -24,8 +31,6 @@ import { AppSettingsValue, AppThemePreference, SettingsModal } from '../../../..
   styleUrl: './profile-page.css',
 })
 export class ProfilePageComponent implements OnInit {
-  private readonly settingsStorageKey = 'appSettings';
-
   loading = false;
   saving = false;
   syncingGithubProjects = false;
@@ -36,8 +41,21 @@ export class ProfilePageComponent implements OnInit {
   appLanguage = 'pt-BR';
   appTheme: AppThemePreference = 'system';
   termsAccepted = false;
+  openAiApiKey = '';
+  jsearchApiKey = '';
+  openAiApiKeyMasked = '';
+  jsearchApiKeyMasked = '';
+  hasOpenAiApiKey = false;
+  hasJsearchApiKey = false;
+  accountEmail = '';
+  passwordResetSending = false;
+  passwordResetSuccessMessage = '';
+  passwordResetErrorMessage = '';
 
   profileForm!: FormGroup;
+
+  private themeService = inject(ThemeService);
+  private authService = inject(AuthService);
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +66,7 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadStoredSettings();
+    this.accountEmail = this.authService.getAuthenticatedEmail();
     this.loadData();
   }
 
@@ -93,6 +111,7 @@ export class ProfilePageComponent implements OnInit {
       experiences: this.profileService.getExperiences(),
       certifications: this.profileService.getCertifications(),
       projects: this.profileService.getProjects(),
+      settings: this.profileService.getSettings(),
     }).subscribe({
       next: (response) => {
         this.patchProfile(response.profile ?? {});
@@ -102,6 +121,7 @@ export class ProfilePageComponent implements OnInit {
           Array.isArray(response.certifications) ? response.certifications : [],
         );
         this.setProjects(Array.isArray(response.projects) ? response.projects : []);
+        this.applySettingsResponse(response.settings);
       },
       error: (error) => {
         console.error('Erro ao carregar perfil:', error);
@@ -258,25 +278,79 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openSettingsModal(): void {
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
+    this.accountEmail = this.authService.getAuthenticatedEmail();
     this.settingsModalOpen = true;
     this.cdr.detectChanges();
   }
 
   closeSettingsModal(): void {
     this.settingsModalOpen = false;
+    this.passwordResetSending = false;
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
     this.cdr.detectChanges();
   }
 
   saveSettings(settings: AppSettingsValue): void {
-    this.appLanguage = settings.language;
-    this.appTheme = settings.theme;
-    this.termsAccepted = settings.termsAccepted;
+    const payload: Partial<AppSettingsValue> = {
+      language: settings.language,
+      theme: settings.theme,
+      termsAccepted: settings.termsAccepted,
+    };
 
-    localStorage.setItem(this.settingsStorageKey, JSON.stringify(settings));
-    this.applyTheme(settings.theme);
-    this.settingsModalOpen = false;
-    this.successMessage = 'Configurações do sistema salvas com sucesso.';
-    this.cdr.detectChanges();
+    if (settings.openAiApiKey.trim()) {
+      payload.openAiApiKey = settings.openAiApiKey.trim();
+    }
+
+    if (settings.jsearchApiKey.trim()) {
+      payload.jsearchApiKey = settings.jsearchApiKey.trim();
+    }
+
+    this.profileService.patchSettings(payload).subscribe({
+      next: (response) => {
+        this.applySettingsResponse(response);
+        this.settingsModalOpen = false;
+        this.successMessage = 'Configurações do sistema salvas com sucesso.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.errorMessage =
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Não foi possível salvar as configurações do sistema.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  requestPasswordReset(email: string): void {
+    if (!email.trim() || this.passwordResetSending) {
+      return;
+    }
+
+    this.passwordResetSending = true;
+    this.passwordResetErrorMessage = '';
+    this.passwordResetSuccessMessage = '';
+
+    this.authService.forgotPassword({ email: email.trim() }).subscribe({
+      next: () => {
+        this.passwordResetSending = false;
+        this.passwordResetSuccessMessage =
+          'Se existir uma conta com esse e-mail, enviaremos um link de redefinicao em instantes.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.passwordResetSending = false;
+        this.passwordResetErrorMessage =
+          error?.error?.campos?.email ||
+          error?.error?.mensagem ||
+          error?.error?.message ||
+          'Nao foi possivel solicitar a redefinicao de senha agora.';
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   goBack(): void {
@@ -368,37 +442,18 @@ export class ProfilePageComponent implements OnInit {
     return '';
   }
 
-  private loadStoredSettings(): void {
-    const raw = localStorage.getItem(this.settingsStorageKey);
+  private applySettingsResponse(settings?: AppSettingsResponse | null): void {
+    this.appLanguage = settings?.language || 'pt-BR';
+    this.appTheme = settings?.theme || 'system';
+    this.termsAccepted = !!settings?.termsAccepted;
+    this.openAiApiKeyMasked = settings?.openAiApiKeyMasked || '';
+    this.jsearchApiKeyMasked = settings?.jsearchApiKeyMasked || '';
+    this.hasOpenAiApiKey = !!settings?.hasOpenAiApiKey;
+    this.hasJsearchApiKey = !!settings?.hasJsearchApiKey;
 
-    if (!raw) {
-      this.applyTheme(this.appTheme);
-      return;
-    }
+    this.openAiApiKey = '';
+    this.jsearchApiKey = '';
 
-    try {
-      const parsed = JSON.parse(raw) as AppSettingsValue;
-      this.appLanguage = parsed.language || 'pt-BR';
-      this.appTheme = parsed.theme || 'system';
-      this.termsAccepted = !!parsed.termsAccepted;
-    } catch {
-      this.appLanguage = 'pt-BR';
-      this.appTheme = 'system';
-      this.termsAccepted = false;
-    }
-
-    this.applyTheme(this.appTheme);
-  }
-
-  private applyTheme(theme: AppThemePreference): void {
-    const root = document.documentElement;
-
-    if (theme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.setAttribute('data-app-theme', prefersDark ? 'dark' : 'light');
-      return;
-    }
-
-    root.setAttribute('data-app-theme', theme);
+    this.themeService.apply(this.appTheme);
   }
 }

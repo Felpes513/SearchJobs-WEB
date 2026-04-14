@@ -22,6 +22,41 @@
       </section>
 
       <section class="config-section">
+        <h3>Integrações</h3>
+        <p class="section-description">
+          Defina as credenciais das APIs para uso local no navegador. Você pode atualizar essas chaves sempre que precisar.
+        </p>
+
+        <label class="field-label" for="openAiApiKey">OpenAI API Key</label>
+        <div class="input-with-action">
+          <input
+            id="openAiApiKey"
+            [type]="hideOpenAiApiKey ? 'password' : 'text'"
+            [(ngModel)]="openAiApiKey"
+            placeholder="sk-..."
+            autocomplete="off"
+          />
+          <button type="button" class="visibility-button" (click)="toggleOpenAiVisibility()">
+            <mat-icon>{{ hideOpenAiApiKey ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+        </div>
+
+        <label class="field-label" for="jsearchApiKey">JSearch API Key</label>
+        <div class="input-with-action">
+          <input
+            id="jsearchApiKey"
+            [type]="hideJsearchApiKey ? 'password' : 'text'"
+            [(ngModel)]="jsearchApiKey"
+            placeholder="Sua chave da JSearch"
+            autocomplete="off"
+          />
+          <button type="button" class="visibility-button" (click)="toggleJsearchVisibility()">
+            <mat-icon>{{ hideJsearchApiKey ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+        </div>
+      </section>
+
+      <section class="config-section">
         <h3>Tema</h3>
         <div class="option-list">
           <label class="option-item">
@@ -49,6 +84,40 @@
           <input type="checkbox" [(ngModel)]="termsAccepted" />
           <span>Li e concordo com os termos de uso atuais</span>
         </label>
+      </section>
+
+      <section class="config-section">
+        <h3>Seguranca</h3>
+        <p class="section-description">
+          Se quiser alterar sua senha, enviaremos um link seguro de redefinicao para o e-mail da sua conta.
+        </p>
+
+        <label class="field-label" for="accountEmail">E-mail da conta</label>
+        <input
+          id="accountEmail"
+          type="email"
+          [(ngModel)]="accountEmail"
+          placeholder="seu-email@exemplo.com"
+          autocomplete="email"
+        />
+
+        <div *ngIf="passwordResetErrorMessage" class="feedback-message error">
+          {{ passwordResetErrorMessage }}
+        </div>
+
+        <div *ngIf="passwordResetSuccessMessage" class="feedback-message success">
+          {{ passwordResetSuccessMessage }}
+        </div>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="secondary-button security-button"
+          [disabled]="passwordResetSending || !accountEmail.trim()"
+          (click)="onRequestPasswordReset()"
+        >
+          {{ passwordResetSending ? 'Enviando link...' : 'Enviar link de redefinicao' }}
+        </button>
       </section>
     </div>
 
