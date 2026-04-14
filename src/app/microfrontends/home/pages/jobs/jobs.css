@@ -28,10 +28,33 @@
 
 .refresh-button {
   flex-shrink: 0;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+  color: #ffffff !important;
+  box-shadow: 0 14px 28px rgba(29, 78, 216, 0.24);
+}
+
+.refresh-button .mdc-button__label {
+  color: inherit;
+}
+
+.refresh-button .mat-icon,
+.refresh-button .mdc-button__label,
+.refresh-button .mdc-button__label * {
+  color: inherit !important;
 }
 
 .refresh-button .mat-icon {
   flex-shrink: 0;
+}
+
+.refresh-button:disabled {
+  opacity: 1;
+  background: linear-gradient(135deg, #93c5fd, #60a5fa);
+  color: #eff6ff !important;
+  box-shadow: none;
 }
 
 .hourglass-animated {
@@ -215,6 +238,18 @@
 
 :host-context([data-app-theme='dark']) .page-header p {
   color: #94a3b8;
+}
+
+:host-context([data-app-theme='dark']) .refresh-button {
+  background: linear-gradient(135deg, #2563eb, #0284c7);
+  color: #f8fafc !important;
+  box-shadow: 0 16px 32px rgba(2, 132, 199, 0.24);
+}
+
+:host-context([data-app-theme='dark']) .refresh-button:disabled {
+  background: linear-gradient(135deg, #1e40af, #075985);
+  color: #dbeafe !important;
+  opacity: 1;
 }
 
 :host-context([data-app-theme='dark']) .state-box {
